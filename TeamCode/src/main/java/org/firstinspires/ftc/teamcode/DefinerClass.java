@@ -201,25 +201,25 @@ public abstract class DefinerClass extends LinearOpMode{
 
         //turning clockwise subtracts values
         //turning counter-clockwise adds values
-        if (x > ang - 50 && x < ang + 50) {
+        if (x > ang - 10 && x < ang + 10) {
             //has reached angle therefore end loop
             FR.setPower(0);
             FL.setPower(0);
             BR.setPower(0);
             BL.setPower(0);
             return;
-        } else if (x > 50 + ang) {
+        } else if (x < 10 + ang) {
             //turn clockwise
-            FR.setPower(.2);
+            FR.setPower(-.5);
             FL.setPower(0);
-            BR.setPower(.2);
+            BR.setPower(-.5);
             BL.setPower(0);
-        } else if (x < ang - 50) {
+        } else if (x > ang - 10) {
             //turn counter-clockwise
             FR.setPower(0);
-            FL.setPower(.2);
+            FL.setPower(-.5);
             BR.setPower(0);
-            BL.setPower(.2);
+            BL.setPower(-.5);
         }
     }
     void composeTelemetry() {
