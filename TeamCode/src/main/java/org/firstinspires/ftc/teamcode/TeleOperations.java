@@ -11,10 +11,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="Main TeleOp", group="Linear Opmode")
 public class TeleOperations extends DefinerClass {
 
-    public double EncoderClicks = 2525;
+    public double EncoderClicks = 2510;
     public boolean shoot = false;
     public boolean pause = false;
     public boolean resume = false;
+    public boolean fire = false;
 
     public DcMotor LauncherM;
     public Servo Reloader;
@@ -53,6 +54,7 @@ public class TeleOperations extends DefinerClass {
             telemetry.addData("FR: ", super.FR.getCurrentPosition());
             telemetry.addData("BL: ", super.BL.getCurrentPosition());
             telemetry.addData("BR: ", super.BR.getCurrentPosition());
+
             telemetry.update();
 
             /*
@@ -67,10 +69,10 @@ public class TeleOperations extends DefinerClass {
 
             if(shoot) {
                 if(!resume) {
-                    if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2525)) {
+                    if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2525)) {
-                        LauncherM.setPower(.1);
+                    } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.08);
                     }
                     else{
                         pause = true;
@@ -84,23 +86,43 @@ public class TeleOperations extends DefinerClass {
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks-2525) && LauncherM.getCurrentPosition() <= 1000 + (EncoderClicks - 2525)) {
-                        LauncherM.setPower(.1);
+                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1000 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.08);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1000 + (EncoderClicks-2525) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2525)) {
+                    else if (LauncherM.getCurrentPosition() > 1000 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2525) && LauncherM.getCurrentPosition() <= EncoderClicks) {
-                        LauncherM.setPower(.1);
+                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                        LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);
                         Reloader.setPosition(0);
                         shoot = false;
                         resume = false;
-                        EncoderClicks = EncoderClicks + 2525;
+                        EncoderClicks = EncoderClicks + 2510;
                     }
                 }
             }
 
+            /*
+
+            CODE FOR FIRE ONLY
+
+             */
+
+            if(gamepad1.right_bumper){
+                fire = true;
+            }
+
+            if(fire){
+                if(LauncherM.getCurrentPosition() <= EncoderClicks){
+                    LauncherM.setPower(1);
+                }
+                else{
+                    LauncherM.setPower(0);
+                    fire = false;
+                    EncoderClicks = EncoderClicks + 2510;
+                }
+            }
             /*
 
             CODE FOR RESETING ENCODERS (LAUNCHER)
@@ -156,16 +178,16 @@ public class TeleOperations extends DefinerClass {
                     x2 = 0;
                 }
                 if(gamepad1.left_bumper){
-                    super.FR.setPower((-y + x2 + x)/slowMode);
-                    super.BR.setPower((y + x2 + x)/slowMode);
-                    super.FL.setPower((y - x2 + x)/slowMode);
-                    super.BL.setPower((-y - x2 + x)/slowMode);
+                    super.FR.setPower((y + x2 + x)/slowMode);
+                    super.BR.setPower((-y + x2 + x)/slowMode);
+                    super.FL.setPower((-y - x2 + x)/slowMode);
+                    super.BL.setPower((y - x2 + x)/slowMode);
                 }
                 else {
-                    super.FR.setPower(-y + x2 + x);
-                    super.BR.setPower(y + x2 + x);
-                    super.FL.setPower(y - x2 + x);
-                    super.BL.setPower(-y - x2 + x);
+                    super.FR.setPower(y + x2 + x);
+                    super.BR.setPower(-y + x2 + x);
+                    super.FL.setPower(-y - x2 + x);
+                    super.BL.setPower(y - x2 + x);
                 }
             }
             /*if(reverseDir){
@@ -203,10 +225,10 @@ public class TeleOperations extends DefinerClass {
             */
 
             if(gamepad2.right_trigger > 0.1f && gamepad2.left_trigger < 0.1f){
-                Roll = -gamepad2.right_trigger;
+                Roll = gamepad2.right_trigger;
             }
             else if(gamepad2.left_trigger > 0.1f && gamepad2.right_trigger < 0.1f){
-                Roll = gamepad2.left_trigger;
+                Roll = -gamepad2.left_trigger;
             }
             else {
                 Roll = 0;
