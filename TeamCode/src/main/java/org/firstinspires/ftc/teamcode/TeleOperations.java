@@ -86,16 +86,16 @@ public class TeleOperations extends DefinerClass {
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1000 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.08);
+                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.05);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1000 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
+                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
+                        Reloader.setPosition(0);
                     } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);
-                        Reloader.setPosition(0);
                         shoot = false;
                         resume = false;
                         EncoderClicks = EncoderClicks + 2510;
