@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="Main TeleOp", group="Linear Opmode")
 public class TeleOperations extends DefinerClass {
 
-    public double EncoderClicks = 2510;
+    public double EncoderClicks = 2515;
     public boolean shoot = false;
     public boolean pause = false;
     public boolean resume = false;
@@ -86,19 +86,19 @@ public class TeleOperations extends DefinerClass {
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2510)) {
+                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2515)) {
                         LauncherM.setPower(.05);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
+                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2515)) {
                         LauncherM.setPower(1);
                         Reloader.setPosition(0);
-                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2515) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);
                         shoot = false;
                         resume = false;
-                        EncoderClicks = EncoderClicks + 2510;
+                        EncoderClicks = EncoderClicks + 2515;
                     }
                 }
             }
