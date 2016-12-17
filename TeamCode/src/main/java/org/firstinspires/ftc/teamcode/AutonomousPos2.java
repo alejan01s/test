@@ -46,12 +46,12 @@ public class AutonomousPos2 extends DefinerClass {
         *******************
          */
         int step = 0;
-        int Angle1 = 350;
+        int Angle1 = 20;
         int Angle2 = 90;
         int Angle3 = 180;
         int FinalAngle = 55;
-        int NumberOfRevs1 = -100;
-        int NumberOfRevs2 = -320;
+        int NumberOfRevs1 = -125;
+        int NumberOfRevs2 = -2900;
         int NumberOfRevsFinal = -2600;
         waitForStart();
         while(opModeIsActive()){
@@ -159,11 +159,17 @@ public class AutonomousPos2 extends DefinerClass {
                     }
                 }
             }
-            if(step == 4) {
+            /*if(step == 4) {
                 super.runOpMode(Angle1, false, false);
-                TimeUnit.SECONDS.sleep(1);
-                NumberOfRevs2 = FR.getCurrentPosition() - 100;
-                step = step++;
+                step = step + 1;
+            }
+            if(step == 5){
+                NumberOfRevs2 = FR.getCurrentPosition() - 300;
+                step = step + 1;
+            }*/
+            if(step == 4){
+                Thread.sleep(1000);
+                step = step + 1;
             }
             if(step == 5){
                 if(FR.getCurrentPosition() > NumberOfRevs2){

@@ -17,15 +17,34 @@ public class TeleOperations extends DefinerClass {
     public boolean resume = false;
     public boolean fire = false;
 
+    public DcMotor LiftL;
+    public DcMotor LiftR;
+
+    public Servo BallG1;
+    public Servo BallG2;
+
     public DcMotor LauncherM;
     public Servo Reloader;
 
     @Override
     public void initializeRobot() {
+
         LauncherM = hardwareMap.dcMotor.get("Launcher");
         Reloader = hardwareMap.servo.get("Reloader");
 
+        LiftL = hardwareMap.dcMotor.get("LiftL");
+        LiftR = hardwareMap.dcMotor.get("LiftR");
+
+        BallG1 = hardwareMap.servo.get("BallG1");
+        BallG2 = hardwareMap.servo.get("BallG2");
+
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        LiftR.setDirection(DcMotor.Direction.REVERSE);
+
+        LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         super.initializeRobot();
     }
 
@@ -48,12 +67,17 @@ public class TeleOperations extends DefinerClass {
 
         waitForStart();
         while(opModeIsActive()){
+
             //UPDATE TELEMETRY
             telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
+
             telemetry.addData("FL: ", super.FL.getCurrentPosition());
             telemetry.addData("FR: ", super.FR.getCurrentPosition());
             telemetry.addData("BL: ", super.BL.getCurrentPosition());
             telemetry.addData("BR: ", super.BR.getCurrentPosition());
+
+            telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
+            telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
 
             telemetry.update();
 
@@ -243,7 +267,7 @@ public class TeleOperations extends DefinerClass {
             */
 
             //BUTTON X IS USED TO TOGGLE LIFT UP AND DOWN
-            /*
+
             boolean CurrentState = gamepad2.x;
 
             if(CurrentState == true && SwitchState != CurrentState && MoveLiftDown == false){
@@ -261,21 +285,21 @@ public class TeleOperations extends DefinerClass {
 
             //RAISE LIFT
             if(MoveLiftUp){
-                if(super.LiftL.getCurrentPosition() < /*HOW EVER MANY CLICKS **CURRENT NUMBER IS PLACEHOLDER***//* 1) {
-                    super.LiftL.setPower(1);
-                    super.LiftR.setPower(1);
+                if(LiftL.getCurrentPosition() < /*HOW EVER MANY CLICKS **CURRENT NUMBER IS PLACEHOLDER***/ 5000) {
+                    LiftL.setPower(1);
+                    LiftR.setPower(1);
                 }
                 MoveLiftUp = false;
             }
             //LOWER LIFT
             else if(MoveLiftDown){
-                if(super.LiftL.getCurrentPosition() > 0){
-                    super.LiftL.setPower(-1);
-                    super.LiftR.setPower(-1);
+                if(LiftL.getCurrentPosition() > 0){
+                    LiftL.setPower(-1);
+                    LiftR.setPower(-1);
                 }
                 MoveLiftDown = false;
             }
-            */
+
             /*
 
             CODE FOR BALL GRABBER
@@ -283,7 +307,7 @@ public class TeleOperations extends DefinerClass {
              */
 
             //RIGHT BUMPER USED TO TOGGLE BALL GRABBERS IN AND OUT
-            /*
+
             boolean CurrentS = gamepad2.right_bumper;
 
             if(CurrentS == true && SwitchS != CurrentS && MoveBGsBack == false){
@@ -300,17 +324,17 @@ public class TeleOperations extends DefinerClass {
             }
 
             if(MoveBGsFor){
-                super.BallG1.setPosition(256);
-                super.BallG2.setPosition(256);
+                BallG1.setPosition(256);
+                BallG2.setPosition(256);
 
                 MoveBGsFor = false;
             }
             else if(MoveBGsBack){
-                super.BallG1.setPosition(0);
-                super.BallG2.setPosition(0);
+                BallG1.setPosition(0);
+                BallG2.setPosition(0);
 
                 MoveBGsBack = false;
-            }*/
+            }
         }
     }
 }
