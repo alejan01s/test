@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,49 +10,81 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 @TeleOp(name="Main TeleOp", group="Linear Opmode")
-public class TeleOperations extends DefinerClass {
+public class TeleOperations extends LinearOpMode {
 
+    //DRIVE-TRAIN MOTORS
+    public DcMotor FR;
+    public DcMotor FL;
+    public DcMotor BR;
+    public DcMotor BL;
+
+    //ROLLER
+    public DcMotor Roller;
+
+    //LAUNCHER VARIABLES
     public double EncoderClicks = 2515;
     public boolean shoot = false;
     public boolean pause = false;
     public boolean resume = false;
     public boolean fire = false;
 
-    public DcMotor LiftL;
-    public DcMotor LiftR;
+    //public DcMotor LiftL;
+    //public DcMotor LiftR;
 
-    public Servo BallG1;
-    public Servo BallG2;
+    //public Servo BallG1;
+    //public Servo BallG2;
 
+    //LAUNCHER MECHANISM
     public DcMotor LauncherM;
     public Servo Reloader;
 
-    @Override
     public void initializeRobot() {
+
+        //CONFIGURATION
+        BL = hardwareMap.dcMotor.get("Bl");
+        BR = hardwareMap.dcMotor.get("Br");
+        FL = hardwareMap.dcMotor.get("Fl");
+        FR = hardwareMap.dcMotor.get("Fr");
+
+        Roller = hardwareMap.dcMotor.get("Roller");
 
         LauncherM = hardwareMap.dcMotor.get("Launcher");
         Reloader = hardwareMap.servo.get("Reloader");
 
-        LiftL = hardwareMap.dcMotor.get("LiftL");
-        LiftR = hardwareMap.dcMotor.get("LiftR");
+        //LiftL = hardwareMap.dcMotor.get("LiftL");
+        //LiftR = hardwareMap.dcMotor.get("LiftR");
 
-        BallG1 = hardwareMap.servo.get("BallG1");
-        BallG2 = hardwareMap.servo.get("BallG2");
+        //BallG1 = hardwareMap.servo.get("BallG1");
+        //BallG2 = hardwareMap.servo.get("BallG2");
+
+        //RUN USING ENCODERS + RESET THEM ON START + REVERSE
+        FL.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        FL.setDirection(DcMotor.Direction.REVERSE);
+        BL.setDirection(DcMotor.Direction.REVERSE);
 
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        LiftR.setDirection(DcMotor.Direction.REVERSE);
+        //LiftL.setDirection(DcMotor.Direction.REVERSE);
 
-        LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        super.initializeRobot();
+        //super.initializeRobot();
     }
 
     @Override
     public void runOpMode() throws InterruptedException{
         initializeRobot();
 
+        //VARIABLES FOR TOGGLING
         boolean PrevDir = false;
         boolean reverseDir = false;
 
@@ -63,21 +96,27 @@ public class TeleOperations extends DefinerClass {
         boolean MoveBGsBack = false;
         boolean MoveBGsFor = false;
 
+        //ROLLER POWER
         double Roll = 0;
 
         waitForStart();
         while(opModeIsActive()){
 
-            //UPDATE TELEMETRY
+            /*
+
+            TELEMETRY DATA
+
+             */
+
             telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
 
-            telemetry.addData("FL: ", super.FL.getCurrentPosition());
-            telemetry.addData("FR: ", super.FR.getCurrentPosition());
-            telemetry.addData("BL: ", super.BL.getCurrentPosition());
-            telemetry.addData("BR: ", super.BR.getCurrentPosition());
+            telemetry.addData("FL: ", FL.getCurrentPosition());
+            telemetry.addData("FR: ", FR.getCurrentPosition());
+            telemetry.addData("BL: ", BL.getCurrentPosition());
+            telemetry.addData("BR: ", BR.getCurrentPosition());
 
-            telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
-            telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
+            //telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
+            //telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
 
             telemetry.update();
 
@@ -86,7 +125,8 @@ public class TeleOperations extends DefinerClass {
             CODE FOR LAUNCHING MECHANISM
 
             */
-            //360 = 2745, 30 degrees for shooting, 130 degrees
+
+            //360 DEGREES = 2745 CLICKS; 30 DEGREES HOLD FOR RELOAD; 130 DEGREES BALL FIRES
             if(gamepad1.right_trigger > .75){
                 shoot = true;
             }
@@ -147,9 +187,10 @@ public class TeleOperations extends DefinerClass {
                     EncoderClicks = EncoderClicks + 2510;
                 }
             }
+
             /*
 
-            CODE FOR RESETING ENCODERS (LAUNCHER)
+            CODE FOR RESETTING LAUNCHER ENCODERS
 
              */
 
@@ -159,9 +200,12 @@ public class TeleOperations extends DefinerClass {
 
             /*
 
-            MECHANUM WHEEL CODE + TOGGLEABLE REVERSE
+            MECHANUM WHEEL CODE + TOGGLEABLE REVERSE (OBSOLETE)
 
             */
+
+            //REVERSE REMED BECAUSE IT IS NO LONGER NEEDED
+
             /*
             boolean CurrentDir = gamepad1.a;
 
@@ -177,7 +221,6 @@ public class TeleOperations extends DefinerClass {
             }
             */
             //final working mechanum wheel code
-            //REVERSE DIRECTION IS OBSOLETE / NO LONGER NEEDED
             if(!reverseDir) {
                 double x = 0;
                 double y = 0;
@@ -202,16 +245,16 @@ public class TeleOperations extends DefinerClass {
                     x2 = 0;
                 }
                 if(gamepad1.left_bumper){
-                    super.FR.setPower((y + x2 + x)/slowMode);
-                    super.BR.setPower((-y + x2 + x)/slowMode);
-                    super.FL.setPower((-y - x2 + x)/slowMode);
-                    super.BL.setPower((y - x2 + x)/slowMode);
+                    FR.setPower((y + x2 + x)/slowMode);
+                    BR.setPower((-y + x2 + x)/slowMode);
+                    FL.setPower((-y - x2 + x)/slowMode);
+                    BL.setPower((y - x2 + x)/slowMode);
                 }
                 else {
-                    super.FR.setPower(y + x2 + x);
-                    super.BR.setPower(-y + x2 + x);
-                    super.FL.setPower(-y - x2 + x);
-                    super.BL.setPower(y - x2 + x);
+                    FR.setPower(y + x2 + x);
+                    BR.setPower(-y + x2 + x);
+                    FL.setPower(-y - x2 + x);
+                    BL.setPower(y - x2 + x);
                 }
             }
             /*if(reverseDir){
@@ -242,6 +285,7 @@ public class TeleOperations extends DefinerClass {
                 super.BL.setPower(y + x2 - x);
             }
             */
+
             /*
 
             CODE FOR ROLLERS
@@ -258,7 +302,7 @@ public class TeleOperations extends DefinerClass {
                 Roll = 0;
             }
 
-            super.Roller.setPower(Roll);
+            Roller.setPower(Roll);
 
             /*
 
@@ -284,21 +328,21 @@ public class TeleOperations extends DefinerClass {
             }
 
             //RAISE LIFT
-            if(MoveLiftUp){
-                if(LiftL.getCurrentPosition() < /*HOW EVER MANY CLICKS **CURRENT NUMBER IS PLACEHOLDER***/ 5000) {
-                    LiftL.setPower(1);
-                    LiftR.setPower(1);
-                }
-                MoveLiftUp = false;
-            }
+            //if(MoveLiftUp){
+                //if(LiftL.getCurrentPosition() < /*HOW EVER MANY CLICKS **CURRENT NUMBER IS PLACEHOLDER***/ 5000) {
+                    //LiftL.setPower(1);
+                    //LiftR.setPower(1);
+                //}
+                //MoveLiftUp = false;
+           //}
             //LOWER LIFT
-            else if(MoveLiftDown){
-                if(LiftL.getCurrentPosition() > 0){
-                    LiftL.setPower(-1);
-                    LiftR.setPower(-1);
-                }
-                MoveLiftDown = false;
-            }
+            //else if(MoveLiftDown){
+                //if(LiftL.getCurrentPosition() > 0){
+                    //LiftL.setPower(-1);
+                    //LiftR.setPower(-1);
+                //}
+                //MoveLiftDown = false;
+            //}
 
             /*
 
@@ -323,18 +367,18 @@ public class TeleOperations extends DefinerClass {
                 Thread.sleep(5);
             }
 
-            if(MoveBGsFor){
-                BallG1.setPosition(256);
-                BallG2.setPosition(256);
+            //if(MoveBGsFor){
+                //BallG1.setPosition(256);
+                //BallG2.setPosition(256);
 
-                MoveBGsFor = false;
-            }
-            else if(MoveBGsBack){
-                BallG1.setPosition(0);
-                BallG2.setPosition(0);
+                //MoveBGsFor = false;
+            //}
+            //else if(MoveBGsBack){
+                //BallG1.setPosition(0);
+                //BallG2.setPosition(0);
 
-                MoveBGsBack = false;
-            }
+                //MoveBGsBack = false;
+            //}
         }
     }
 }
