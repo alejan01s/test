@@ -28,11 +28,14 @@ public class TeleOperations extends LinearOpMode {
     public boolean resume = false;
     public boolean fire = false;
 
+    //ROLLER VARIABLES
+    public double rollerState = 0;
+
     //public DcMotor LiftL;
     //public DcMotor LiftR;
 
-    //public Servo BallG1;
-    //public Servo BallG2;
+    public Servo BallG1;
+    public Servo BallG2;
 
     //LAUNCHER MECHANISM
     public DcMotor LauncherM;
@@ -54,8 +57,8 @@ public class TeleOperations extends LinearOpMode {
         //LiftL = hardwareMap.dcMotor.get("LiftL");
         //LiftR = hardwareMap.dcMotor.get("LiftR");
 
-        //BallG1 = hardwareMap.servo.get("BallG1");
-        //BallG2 = hardwareMap.servo.get("BallG2");
+        BallG1 = hardwareMap.servo.get("BallG1");
+        BallG2 = hardwareMap.servo.get("BallG2");
 
         //RUN USING ENCODERS + RESET THEM ON START + REVERSE
         FL.setMode(DcMotor.RunMode.RESET_ENCODERS);
@@ -76,6 +79,8 @@ public class TeleOperations extends LinearOpMode {
 
         //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //BallG2.setDirection(Servo.Direction.REVERSE);
 
         //super.initializeRobot();
     }
@@ -117,6 +122,11 @@ public class TeleOperations extends LinearOpMode {
 
             //telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
             //telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
+
+            telemetry.addData("BallG1 Encoder: ", BallG1.getPosition());
+            telemetry.addData("BallG2 Encoder: ", BallG2.getPosition());
+
+            telemetry.addData("Roller Status: ", rollerState);
 
             telemetry.update();
 
@@ -352,6 +362,8 @@ public class TeleOperations extends LinearOpMode {
 
             //RIGHT BUMPER USED TO TOGGLE BALL GRABBERS IN AND OUT
 
+            //FOLLOWING CODE IS OBSOLETE
+            /*
             boolean CurrentS = gamepad2.right_bumper;
 
             if(CurrentS == true && SwitchS != CurrentS && MoveBGsBack == false){
@@ -367,18 +379,51 @@ public class TeleOperations extends LinearOpMode {
                 Thread.sleep(5);
             }
 
-            //if(MoveBGsFor){
-                //BallG1.setPosition(256);
-                //BallG2.setPosition(256);
+            if(MoveBGsFor){
+                BallG1.setPosition(256);
+                BallG2.setPosition(256);
 
-                //MoveBGsFor = false;
-            //}
-            //else if(MoveBGsBack){
-                //BallG1.setPosition(0);
-                //BallG2.setPosition(0);
+                MoveBGsFor = false;
+            }
+            else if(MoveBGsBack){
+                BallG1.setPosition(0);
+                BallG2.setPosition(0);
 
-                //MoveBGsBack = false;
-            //}
+                MoveBGsBack = false;
+            }
+            */
+
+            boolean isToggled = gamepad2.right_bumper;
+
+            /*
+            if(isToggled && rollerState != 2){
+                rollerState = rollerState + 1;
+                Thread.sleep(500);
+            }
+            else if(isToggled && rollerState == 2){
+                rollerState = 0;
+                Thread.sleep(500);
+            }
+            */
+
+            if(isToggled) {
+                rollerState = rollerState != 2 ? rollerState + 1 : 0;
+                Thread.sleep(500);
+            }
+
+            if(rollerState == 0){
+                BallG1.setPosition(.5);
+                BallG2.setPosition(.5);
+                telemetry.update();
+            }
+            else if(rollerState == 1){
+                BallG1.setPosition(.25);
+                BallG2.setPosition(.25);
+            }
+            else if(rollerState == 2){
+                BallG1.setPosition(.75);
+                BallG2.setPosition(.75);
+            }
         }
     }
 }
