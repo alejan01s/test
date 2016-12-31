@@ -2,11 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -19,58 +18,49 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by aleja on 10/12/2016.
+ * Created by aleja on 12/4/2016.
  */
 
-public abstract class DefinerClass extends LinearOpMode{
+//Plan: Launch ball into goal, reload, launch second, then knock ball out of center goal and end.
 
+@Autonomous (name = "PrimaryAutonomousRED", group = "Sensor")
+public class AutonV2 extends LinearOpMode {
+
+
+    //MOTORS
     public DcMotor FR;
     public DcMotor FL;
     public DcMotor BR;
     public DcMotor BL;
 
-    //public DcMotor LiftL;
-    //public DcMotor LiftR;
 
-    //public DcMotor LauncherM;
-    //public Servo Reloader;
+    //VARIABLES FOR LAUNCHER
+    public double EncoderClicks = 2510;
+    public boolean shoot = false;
+    public boolean pause = false;
+    public boolean resume = false;
+    public DcMotor LauncherM;
+    public Servo Reloader;
 
-    //public Servo BallG1;
-    //public Servo BallG2;
 
-    public DcMotor Roller;
-
-    public OpticalDistanceSensor OD;
-
+    //IMU
     BNO055IMU imu;
-
     Orientation angles;
     Acceleration gravity;
-
     public double x;
+    public boolean turnCompleted = false;
 
-    public void initializeRobot(){
+    public void initializeRobot () {
+
+
+        //DRIVE-TRAIN MOTORS
         BL = hardwareMap.dcMotor.get("Bl");
         BR = hardwareMap.dcMotor.get("Br");
         FL = hardwareMap.dcMotor.get("Fl");
         FR = hardwareMap.dcMotor.get("Fr");
-
-        //LiftL = hardwareMap.dcMotor.get("LiftL");
-        //LiftR = hardwareMap.dcMotor.get("LiftR");
-
-        //LauncherM = hardwareMap.dcMotor.get("Launcher");
-        //Reloader = hardwareMap.servo.get("Reloader");
-
-        //BallG1 = hardwareMap.servo.get("BallG1");
-        //BallG2 = hardwareMap.servo.get("BallG2");
-
-        Roller = hardwareMap.dcMotor.get("Roller");
-
-        //OD = hardwareMap.opticalDistanceSensor.get("OD");
-        //encoders for drive train 2 for lift
-
         FL.setMode(DcMotor.RunMode.RESET_ENCODERS);
         FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FR.setMode(DcMotor.RunMode.RESET_ENCODERS);
@@ -79,126 +69,237 @@ public abstract class DefinerClass extends LinearOpMode{
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RESET_ENCODERS);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
-        //LiftR.setDirection(DcMotor.Direction.REVERSE);
 
-        //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LiftL.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LiftR.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
-        //LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LauncherM.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        //LAUNCHER MOTORS
+        LauncherM = hardwareMap.dcMotor.get("Launcher");
+        Reloader = hardwareMap.servo.get("Reloader");
+        LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
-    public void runOpMode(double num) throws InterruptedException{
+    public void runOpMode() throws InterruptedException{
+
         initializeRobot();
+
+
+        //IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        composeTelemetry();
-        // Wait until we're told to go
-        waitForStart();
-
-        // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        // Loop and update the dashboard
-        while (opModeIsActive()) {
+
+        //SEQUENCE VARIABLE
+        int step = 0;
+
+        //REVOLUTION VARIABLES
+        int NumberOfRevs1 = -300;
+        int NumberOfRevs2 = -3500;
+
+        //ANGLE VARIABLES
+        double Angle1 = 50;
+
+        composeTelemetry();
+        waitForStart();
+        while(opModeIsActive()){
+
+            telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
+
+            telemetry.addData("FL: ", FL.getCurrentPosition());
+            telemetry.addData("FR: ", FR.getCurrentPosition());
+            telemetry.addData("BL: ", BL.getCurrentPosition());
+            telemetry.addData("BR: ", BR.getCurrentPosition());
+
+            telemetry.addData("x", x);
+
+
             telemetry.update();
+
+            //ESTABLISH ROTATION
             x = Double.parseDouble(formatAngle(angles.angleUnit, angles.firstAngle));
             if (x < 0) {
                 x = x + 360;
             }
-            telemetry.addData("x", x);
-            MoveToAngle(num);
-            //LaunchBall(L);
-            //Reload(R);
-        }
-    }
-    /* OBSOLETE
-    void LaunchBall (boolean Launch) {
-        double EncoderClicks = 0;
-        if(!Launch){
-            return;
-        }
-        else if(Launch){
-            if(LauncherM.getCurrentPosition() < EncoderClicks) {
-                LauncherM.setPower(1);
-            }
-            else{
-                LauncherM.setMode(DcMotor.RunMode.RESET_ENCODERS);
-                LauncherM.setPower(0);
-                return;
-            }
-        }
-    }
-    void LaunchSequence (boolean Launch){
-        double EncoderClicks = 0;
-        boolean reled = false;
-        boolean fire = false;
-        if(!Launch){
-            return;
-        }
-        if(Launch){
-            if (LauncherM.getCurrentPosition() < EncoderClicks / 2) {
-                LauncherM.setPower(1);
-            }
-            else {
-                LauncherM.setPower(0);
-                if(!reled){
-                    Reloader.setPosition(255);
-                    reled = true;
-                }
-                else if(reled){
-                    Reloader.setPosition(0);
-                    fire = true;
-                }
-            }
-            if(fire){
-                if(LauncherM.getCurrentPosition() < EncoderClicks){
-                    LauncherM.setPower(1);
+
+            //SEQUENCES
+
+            //MOVE FORWARD
+            if(step == 0){
+                if(FL.getCurrentPosition() > NumberOfRevs1) {
+                    BL.setPower(-.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(-.5);
                 }
                 else{
-                    LauncherM.setPower(0);
-                    LauncherM.setMode(DcMotor.RunMode.RESET_ENCODERS);
-                    return;
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step++;
                 }
             }
-        }
-    }
-    void Reload (boolean Rel) {
-        boolean hasReled = false;
-        if (!Rel) {
-            return;
-        }
-        if (Rel) {
-            if (!hasReled) {
-                Reloader.setPosition(255);
-                hasReled = true;
-            } else {
-                Reloader.setPosition(0);
-                hasReled = false;
-                return;
+
+            //LAUNCH BALLS
+            if(step == 1){
+                shoot = true;
+                step++;
+            }
+            if(step == 2){
+                if(!shoot) {
+                    shoot = true;
+                    step++;
+                }
+            }
+
+            //TURN
+            if(step == 3){
+                if(!shoot) {
+                    MoveToAngle(Angle1);
+                    if(turnCompleted){
+                        step++;
+                    }
+                }
+            }
+
+            //MOVE FORWARD
+            if(step == 4){
+                turnCompleted = false;
+                if(FL.getCurrentPosition() > NumberOfRevs1) {
+                    BL.setPower(-.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(-.5);
+                }
+                else{
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step++;
+                }
+            }
+
+            //LINE FOLLOW
+            if(step == 5){
+
+            }
+
+            //DETECT COLOR
+            if(step == -1){
+
+            }
+
+            //PUSH BUTTON
+            if(step == -1){
+
+            }
+
+            //BACK UP
+            if(step == -1){
+
+            }
+
+            //TURN
+            if(step == -1){
+
+            }
+
+            //MOVE FORWARD
+            if(step == -1){
+
+            }
+
+            //LINE FOLLOW
+            if(step == -1){
+
+            }
+
+            //DETECT COLOR
+            if(step == -1){
+
+            }
+
+            //PUSH BUTTON
+            if(step == -1){
+
+            }
+
+            //BACK UP
+            if(step == -1){
+
+            }
+
+            //TURN
+            if(step == -1){
+
+            }
+
+            //MOVE FORWARD
+            if(step == -1){
+
+            }
+
+            /*
+
+            SHOOTING SYSTEM
+
+             */
+
+            if(shoot) {
+                if(!resume) {
+                    if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(1);
+                    } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.08);
+                    }
+                    else{
+                        pause = true;
+                    }
+                    if (pause) {
+                        //INPUT RELOAD FUNCTION WHEN READY HERE
+                        LauncherM.setPower(0.03);
+                        Reloader.setPosition(256);
+                        resume = true;
+                        pause = false;
+                    }
+                }
+                if(resume) {
+                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1300 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.05);
+                    }
+                    else if (LauncherM.getCurrentPosition() > 1300 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(1);
+                        Reloader.setPosition(0);
+                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                        LauncherM.setPower(.08);
+                    } else {
+                        LauncherM.setPower(0);
+                        resume = false;
+                        EncoderClicks = EncoderClicks + 2510;
+                        Thread.sleep(500);
+                        shoot = false;
+                    }
+                }
+
+                idle();
             }
         }
     }
-    */
-    void MoveToAngle (double ang){
 
+
+    //MOVE TO ANGLE
+    void MoveToAngle (double ang){
         //turning clockwise subtracts values
         //turning counter-clockwise adds values
         if (x > ang - 10 && x < ang + 10) {
@@ -207,6 +308,7 @@ public abstract class DefinerClass extends LinearOpMode{
             FL.setPower(0);
             BR.setPower(0);
             BL.setPower(0);
+            turnCompleted = true;
             return;
         } else if (x < 10 + ang) {
             //turn clockwise
@@ -222,6 +324,8 @@ public abstract class DefinerClass extends LinearOpMode{
             BL.setPower(-.5);
         }
     }
+
+    //IMU
     void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data

@@ -59,6 +59,6 @@ public class ColorTester extends LinearOpMode {
     }
 
     public void blueProcedure () {
-        //RUN BUTTON PUSHER AND POSITION FOR BLUE 
+        //RUN BUTTON PUSHER AND POSITION FOR BLUE
     }
 }

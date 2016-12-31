@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 //Plan: Launch ball into goal, reload, launch second, then knock ball out of center goal and end.
-
+@Disabled
 @Autonomous (name = "AutonomousV1", group = "Sensor")
 public class AutonomousV1 extends DefinerClass {
 
@@ -63,7 +64,7 @@ public class AutonomousV1 extends DefinerClass {
             telemetry.addData("BL: ", BL.getCurrentPosition());
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
-            telemetry.addData("x", x);
+            telemetry.addData("x", super.x);
 
             telemetry.update();
             //Step 1: Position Robot

@@ -232,34 +232,34 @@ public class TeleOperations extends LinearOpMode {
             */
             //final working mechanum wheel code
             if(!reverseDir) {
-                double x = 0;
-                double y = 0;
-                double x2 = 0;
+                    double x = 0;
+                    double y = 0;
+                    double x2 = 0;
 
-                final double slowMode = 6;
-                final double joystickThreshold = 10;
+                    final double slowMode = 6;
+                    final double joystickThreshold = 10;
 
-                if (Math.abs(100 * gamepad1.left_stick_x) > joystickThreshold) {
-                    y = gamepad1.left_stick_x;
-                } else {
-                    y = 0;
-                }
-                if (Math.abs(100 * gamepad1.left_stick_y) > joystickThreshold) {
-                    x = gamepad1.left_stick_y;
-                } else {
-                    x = 0;
-                }
-                if (Math.abs(100 * gamepad1.right_stick_x) > joystickThreshold) {
-                    x2 = gamepad1.right_stick_x;
-                } else {
-                    x2 = 0;
-                }
-                if(gamepad1.left_bumper){
-                    FR.setPower((y + x2 + x)/slowMode);
-                    BR.setPower((-y + x2 + x)/slowMode);
-                    FL.setPower((-y - x2 + x)/slowMode);
-                    BL.setPower((y - x2 + x)/slowMode);
-                }
+                    if (Math.abs(100 * gamepad1.left_stick_x) > joystickThreshold) {
+                        y = gamepad1.left_stick_x;
+                    } else {
+                        y = 0;
+                    }
+                    if (Math.abs(100 * gamepad1.left_stick_y) > joystickThreshold) {
+                        x = gamepad1.left_stick_y;
+                    } else {
+                        x = 0;
+                    }
+                    if (Math.abs(100 * gamepad1.right_stick_x) > joystickThreshold) {
+                        x2 = gamepad1.right_stick_x;
+                    } else {
+                        x2 = 0;
+                    }
+                    if(gamepad1.left_bumper){
+                        FR.setPower((y + x2 + x)/slowMode);
+                        BR.setPower((-y + x2 + x)/slowMode);
+                        FL.setPower((-y - x2 + x)/slowMode);
+                        BL.setPower((y - x2 + x)/slowMode);
+                    }
                 else {
                     FR.setPower(y + x2 + x);
                     BR.setPower(-y + x2 + x);
@@ -410,18 +410,18 @@ public class TeleOperations extends LinearOpMode {
                 rollerState = rollerState != 2 ? rollerState + 1 : 0;
                 Thread.sleep(500);
             }
-
+            //ball grabber 1 reach pos 0 to stow 1 to grab
+            //ball grabber 2 reach pos 1 to stow 0 to grab
             if(rollerState == 0){
-                BallG1.setPosition(.5);
-                BallG2.setPosition(.5);
-                telemetry.update();
+                BallG1.setPosition(0);
+                BallG2.setPosition(1);
             }
             else if(rollerState == 1){
-                BallG1.setPosition(.25);
-                BallG2.setPosition(.25);
+                BallG1.setPosition(0.1);
+                BallG2.setPosition(0.9);
             }
             else if(rollerState == 2){
-                BallG1.setPosition(.75);
+                BallG1.setPosition(.25);
                 BallG2.setPosition(.75);
             }
         }
