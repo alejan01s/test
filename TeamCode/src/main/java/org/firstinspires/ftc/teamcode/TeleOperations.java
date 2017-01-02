@@ -37,9 +37,20 @@ public class TeleOperations extends LinearOpMode {
     public Servo BallG1;
     public Servo BallG2;
 
+    public boolean waitForDetoggle = false;
+    public boolean manualOverrideBallG1;
+    public boolean manualOverrideBallG2;
+
+    public double posBallG1 = 0;
+    public double posBallG2 = 0;
+
     //LAUNCHER MECHANISM
     public DcMotor LauncherM;
     public Servo Reloader;
+
+    public Servo buttonPusher;
+    public boolean buttonPress;
+    public boolean buttonInit;
 
     public void initializeRobot() {
 
@@ -75,6 +86,8 @@ public class TeleOperations extends LinearOpMode {
 
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        buttonPusher = hardwareMap.servo.get("buttonPusher");
+
         //LiftL.setDirection(DcMotor.Direction.REVERSE);
 
         //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -100,6 +113,9 @@ public class TeleOperations extends LinearOpMode {
         boolean SwitchS = false;
         boolean MoveBGsBack = false;
         boolean MoveBGsFor = false;
+
+        boolean buttonPress = false;
+        boolean buttonInit = false;
 
         //ROLLER POWER
         double Roll = 0;
@@ -406,24 +422,76 @@ public class TeleOperations extends LinearOpMode {
             }
             */
 
-            if(isToggled) {
-                rollerState = rollerState != 2 ? rollerState + 1 : 0;
-                Thread.sleep(500);
+            manualOverrideBallG1 = gamepad2.right_stick_y > .25 || gamepad2.right_stick_y < -.25 ? true : false;
+            manualOverrideBallG2 = gamepad2.left_stick_y > .25 || gamepad2.left_stick_y < -.25 ? true : false;
+
+            if(manualOverrideBallG1 || manualOverrideBallG2) {
+                if(gamepad2.right_stick_y > .25 || gamepad2.left_stick_y > .25) {
+                    posBallG1 = BallG1.getPosition() - .001;
+                    posBallG2 = BallG2.getPosition() + .001;
+                }
+                else{
+                    posBallG1 = BallG1.getPosition() + .001;
+                    posBallG2 = BallG2.getPosition() - .001;
+                }
             }
-            //ball grabber 1 reach pos 0 to stow 1 to grab
-            //ball grabber 2 reach pos 1 to stow 0 to grab
-            if(rollerState == 0){
-                BallG1.setPosition(0);
-                BallG2.setPosition(1);
+            else{
+                posBallG1 = BallG1.getPosition();
+                posBallG2 = BallG2.getPosition();
             }
-            else if(rollerState == 1){
-                BallG1.setPosition(0.1);
-                BallG2.setPosition(0.9);
+            if(manualOverrideBallG1){
+                BallG1.setPosition(posBallG1);
+                waitForDetoggle = true;
             }
-            else if(rollerState == 2){
-                BallG1.setPosition(.25);
-                BallG2.setPosition(.75);
+
+            if(manualOverrideBallG2){
+                BallG2.setPosition(posBallG2);
+                waitForDetoggle = true;
             }
+
+            if(isToggled){
+                waitForDetoggle = false;
+            }
+
+            if(!manualOverrideBallG1 && !manualOverrideBallG2 && !waitForDetoggle) {
+                if (isToggled) {
+                    rollerState = rollerState != 2 ? rollerState + 1 : 0;
+                    Thread.sleep(500);
+                }
+                //ball grabber 1 reach pos 0 to stow 1 to grab
+                //ball grabber 2 reach pos 1 to stow 0 to grab
+                if (rollerState == 0) {
+                    BallG1.setPosition(0);
+                    BallG2.setPosition(1);
+                } else if (rollerState == 1) {
+                    BallG1.setPosition(0.3);
+                    BallG2.setPosition(0.7);
+                } else if (rollerState == 2) {
+                    BallG1.setPosition(.35);
+                    BallG2.setPosition(.65);
+                }
+            }
+
+            /*
+
+            BUTTON PUSHER
+
+            */
+
+            if(!buttonInit){
+                buttonPusher.setPosition(.5);
+                if(gamepad1.y){
+                    buttonInit = true;
+                }
+            }
+            else{
+                buttonPusher.setPosition(.4);
+                Thread.sleep(700);
+                buttonPusher.setPosition(.6);
+                Thread.sleep(700);
+                buttonInit = false;
+            }
+
         }
     }
 }
