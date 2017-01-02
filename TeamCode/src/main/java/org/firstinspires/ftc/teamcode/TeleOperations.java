@@ -31,8 +31,10 @@ public class TeleOperations extends LinearOpMode {
     //ROLLER VARIABLES
     public double rollerState = 0;
 
-    //public DcMotor LiftL;
-    //public DcMotor LiftR;
+    public DcMotor LiftL;
+    public DcMotor LiftR;
+    public double encodersLift;
+    public boolean tensionLift;
 
     public Servo BallG1;
     public Servo BallG2;
@@ -52,7 +54,7 @@ public class TeleOperations extends LinearOpMode {
     public boolean buttonPress;
     public boolean buttonInit;
 
-    public void initializeRobot() {
+    public void initializeRobot() throws InterruptedException {
 
         //CONFIGURATION
         BL = hardwareMap.dcMotor.get("Bl");
@@ -65,8 +67,8 @@ public class TeleOperations extends LinearOpMode {
         LauncherM = hardwareMap.dcMotor.get("Launcher");
         Reloader = hardwareMap.servo.get("Reloader");
 
-        //LiftL = hardwareMap.dcMotor.get("LiftL");
-        //LiftR = hardwareMap.dcMotor.get("LiftR");
+        LiftL = hardwareMap.dcMotor.get("LiftL");
+        LiftR = hardwareMap.dcMotor.get("LiftR");
 
         BallG1 = hardwareMap.servo.get("BallG1");
         BallG2 = hardwareMap.servo.get("BallG2");
@@ -90,8 +92,8 @@ public class TeleOperations extends LinearOpMode {
 
         //LiftL.setDirection(DcMotor.Direction.REVERSE);
 
-        //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //BallG2.setDirection(Servo.Direction.REVERSE);
 
@@ -103,9 +105,6 @@ public class TeleOperations extends LinearOpMode {
         initializeRobot();
 
         //VARIABLES FOR TOGGLING
-        boolean PrevDir = false;
-        boolean reverseDir = false;
-
         boolean SwitchState = false;
         boolean MoveLiftUp = false;
         boolean MoveLiftDown = false;
@@ -119,6 +118,8 @@ public class TeleOperations extends LinearOpMode {
 
         //ROLLER POWER
         double Roll = 0;
+
+        tensionLift = false;
 
         waitForStart();
         while(opModeIsActive()){
@@ -136,7 +137,7 @@ public class TeleOperations extends LinearOpMode {
             telemetry.addData("BL: ", BL.getCurrentPosition());
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
-            //telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
+            telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
             //telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
 
             telemetry.addData("BallG1 Encoder: ", BallG1.getPosition());
@@ -168,7 +169,6 @@ public class TeleOperations extends LinearOpMode {
                         pause = true;
                     }
                     if (pause) {
-                        //INPUT RELOAD FUNCTION WHEN READY HERE
                         LauncherM.setPower(0.03);
                         Reloader.setPosition(256);
                         resume = true;
@@ -179,10 +179,10 @@ public class TeleOperations extends LinearOpMode {
                     if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2515)) {
                         LauncherM.setPower(.05);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2515)) {
+                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2515)) {
                         LauncherM.setPower(1);
                         Reloader.setPosition(0);
-                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2515) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    } else if (LauncherM.getCurrentPosition() > 2255 + (EncoderClicks - 2515) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);
@@ -195,7 +195,7 @@ public class TeleOperations extends LinearOpMode {
 
             /*
 
-            CODE FOR FIRE ONLY
+            CODE FOR FIRE SEQUENCE ONLY
 
              */
 
@@ -216,7 +216,7 @@ public class TeleOperations extends LinearOpMode {
 
             /*
 
-            CODE FOR RESETTING LAUNCHER ENCODERS
+            CODE FOR MANUALLY RESETTING LAUNCHER ENCODERS
 
              */
 
@@ -226,91 +226,47 @@ public class TeleOperations extends LinearOpMode {
 
             /*
 
-            MECHANUM WHEEL CODE + TOGGLEABLE REVERSE (OBSOLETE)
+            MECHANUM WHEEL CODE
 
             */
 
-            //REVERSE REMED BECAUSE IT IS NO LONGER NEEDED
 
-            /*
-            boolean CurrentDir = gamepad1.a;
+            //FINAL WORKING MECHANUM WHEEL CODE
 
-            if(CurrentDir == true && PrevDir != CurrentDir) {
-                PrevDir = CurrentDir;
-                reverseDir = true;
-                Thread.sleep(5);
+            double x;
+            double y;
+            double x2;
+
+            final double slowMode = 6;
+            final double joystickThreshold = 10;
+
+            if (Math.abs(100 * gamepad1.left_stick_x) > joystickThreshold) {
+                y = gamepad1.left_stick_x;
+            } else {
+                y = 0;
             }
-            else if(CurrentDir == true && PrevDir == CurrentDir) {
-                PrevDir = false;
-                reverseDir = false;
-                Thread.sleep(5);
+            if (Math.abs(100 * gamepad1.left_stick_y) > joystickThreshold) {
+                x = gamepad1.left_stick_y;
+            } else {
+                x = 0;
             }
-            */
-            //final working mechanum wheel code
-            if(!reverseDir) {
-                    double x;
-                    double y;
-                    double x2;
-
-                    final double slowMode = 6;
-                    final double joystickThreshold = 10;
-
-                    if (Math.abs(100 * gamepad1.left_stick_x) > joystickThreshold) {
-                        y = gamepad1.left_stick_x;
-                    } else {
-                        y = 0;
-                    }
-                    if (Math.abs(100 * gamepad1.left_stick_y) > joystickThreshold) {
-                        x = gamepad1.left_stick_y;
-                    } else {
-                        x = 0;
-                    }
-                    if (Math.abs(100 * gamepad1.right_stick_x) > joystickThreshold) {
-                        x2 = gamepad1.right_stick_x;
-                    } else {
-                        x2 = 0;
-                    }
-                    if(gamepad1.left_bumper){
-                        FR.setPower((y + x2 + x)/slowMode);
-                        BR.setPower((-y + x2 + x)/slowMode);
-                        FL.setPower((-y - x2 + x)/slowMode);
-                        BL.setPower((y - x2 + x)/slowMode);
-                    }
-                else {
-                    FR.setPower(y + x2 + x);
-                    BR.setPower(-y + x2 + x);
-                    FL.setPower(-y - x2 + x);
-                    BL.setPower(y - x2 + x);
-                }
+            if (Math.abs(100 * gamepad1.right_stick_x) > joystickThreshold) {
+                x2 = gamepad1.right_stick_x;
+            } else {
+                x2 = 0;
             }
-            /*if(reverseDir){
-                double x = 0;
-                double y = 0;
-                double x2 = 0;
-
-                final double joystickThreshold = 5;
-
-                if (Math.abs(100 * gamepad1.left_stick_x) > joystickThreshold) {
-                    y = gamepad1.left_stick_x;
-                } else {
-                    y = 0;
-                }
-                if (Math.abs(100 * gamepad1.left_stick_y) > joystickThreshold) {
-                    x = gamepad1.left_stick_y;
-                } else {
-                    x = 0;
-                }
-                if (Math.abs(100 * gamepad1.right_stick_x) > joystickThreshold) {
-                    x2 = gamepad1.right_stick_x;
-                } else {
-                    x2 = 0;
-                }
-                super.FR.setPower(y - x2 - x);
-                super.BR.setPower(-y + x2 - x);
-                super.FL.setPower(-y - x2 - x);
-                super.BL.setPower(y + x2 - x);
+            if(gamepad1.left_bumper){
+                FR.setPower((y + x2 + x)/slowMode);
+                BR.setPower((-y + x2 + x)/slowMode);
+                FL.setPower((-y - x2 + x)/slowMode);
+                BL.setPower((y - x2 + x)/slowMode);
             }
-            */
+            else {
+                FR.setPower(y + x2 + x);
+                BR.setPower(-y + x2 + x);
+                FL.setPower(-y - x2 + x);
+                BL.setPower(y - x2 + x);
+            }
 
             /*
 
@@ -343,32 +299,64 @@ public class TeleOperations extends LinearOpMode {
             if(CurrentState == true && SwitchState != CurrentState && MoveLiftDown == false){
                 SwitchState = CurrentState;
                 MoveLiftUp = true;
+                tensionLift = true;
+                encodersLift = LiftL.getCurrentPosition() - 8000;
 
                 Thread.sleep(5);
             }
             else if(CurrentState == true && SwitchState == CurrentState && MoveLiftUp == false){
                 SwitchState = false;
                 MoveLiftDown = true;
+                tensionLift = true;
 
                 Thread.sleep(5);
             }
 
             //RAISE LIFT
-            //if(MoveLiftUp){
-                //if(LiftL.getCurrentPosition() < /*HOW EVER MANY CLICKS **CURRENT NUMBER IS PLACEHOLDER***/ 5000) {
-                    //LiftL.setPower(1);
-                    //LiftR.setPower(1);
-                //}
-                //MoveLiftUp = false;
-           //}
+            if(MoveLiftUp){
+                if(tensionLift) {
+                    LiftL.setPower(-.03);
+                    LiftR.setPower(.03);
+                    Thread.sleep(2500);
+                    LiftL.setPower(0);
+                    LiftR.setPower(0);
+                    Thread.sleep(1500);
+                    tensionLift = false;
+                }
+                if(!tensionLift) {
+                    if (LiftL.getCurrentPosition() > encodersLift) {
+                        LiftL.setPower(-1);
+                        LiftR.setPower(1);
+                    } else {
+                        LiftL.setPower(0);
+                        LiftR.setPower(0);
+                        MoveLiftUp = false;
+                    }
+                }
+           }
             //LOWER LIFT
-            //else if(MoveLiftDown){
-                //if(LiftL.getCurrentPosition() > 0){
-                    //LiftL.setPower(-1);
-                    //LiftR.setPower(-1);
-                //}
-                //MoveLiftDown = false;
-            //}
+            else if(MoveLiftDown){
+                if(tensionLift) {
+                    if (LiftL.getCurrentPosition() < 0) {
+                        LiftL.setPower(1);
+                        LiftR.setPower(-1);
+                    } else {
+                        LiftL.setPower(0);
+                        LiftR.setPower(0);
+                        tensionLift = false;
+                    }
+                }
+                if(!tensionLift){
+                    Thread.sleep(1000);
+                    LiftL.setPower(-.03);
+                    LiftR.setPower(.03);
+                    Thread.sleep(2500);
+                    LiftL.setPower(0);
+                    LiftR.setPower(0);
+                    Thread.sleep(1000);
+                    MoveLiftDown = false;
+                }
+            }
 
             /*
 
@@ -377,50 +365,9 @@ public class TeleOperations extends LinearOpMode {
              */
 
             //RIGHT BUMPER USED TO TOGGLE BALL GRABBERS IN AND OUT
-
-            //FOLLOWING CODE IS OBSOLETE
-            /*
-            boolean CurrentS = gamepad2.right_bumper;
-
-            if(CurrentS == true && SwitchS != CurrentS && MoveBGsBack == false){
-                SwitchS = CurrentS;
-                MoveBGsFor = true;
-
-                Thread.sleep(5);
-            }
-            else if(CurrentS == true && SwitchS == CurrentS && MoveBGsFor == false){
-                SwitchS = false;
-                MoveBGsBack = true;
-
-                Thread.sleep(5);
-            }
-
-            if(MoveBGsFor){
-                BallG1.setPosition(256);
-                BallG2.setPosition(256);
-
-                MoveBGsFor = false;
-            }
-            else if(MoveBGsBack){
-                BallG1.setPosition(0);
-                BallG2.setPosition(0);
-
-                MoveBGsBack = false;
-            }
-            */
+            //MANUAL OVERRIDE WORKS ON GAMEPAD2'S JOYSTICKS
 
             boolean isToggled = gamepad2.right_bumper;
-
-            /*
-            if(isToggled && rollerState != 2){
-                rollerState = rollerState + 1;
-                Thread.sleep(500);
-            }
-            else if(isToggled && rollerState == 2){
-                rollerState = 0;
-                Thread.sleep(500);
-            }
-            */
 
             manualOverrideBallG1 = gamepad2.right_stick_y > .25 || gamepad2.right_stick_y < -.25 ? true : false;
             manualOverrideBallG2 = gamepad2.left_stick_y > .25 || gamepad2.left_stick_y < -.25 ? true : false;
