@@ -248,9 +248,9 @@ public class TeleOperations extends LinearOpMode {
             */
             //final working mechanum wheel code
             if(!reverseDir) {
-                    double x = 0;
-                    double y = 0;
-                    double x2 = 0;
+                    double x;
+                    double y;
+                    double x2;
 
                     final double slowMode = 6;
                     final double joystickThreshold = 10;
@@ -486,9 +486,9 @@ public class TeleOperations extends LinearOpMode {
             }
             else{
                 buttonPusher.setPosition(.4);
-                Thread.sleep(700);
+                Thread.sleep(1500);
                 buttonPusher.setPosition(.6);
-                Thread.sleep(700);
+                Thread.sleep(1500);
                 buttonInit = false;
             }
 
