@@ -70,8 +70,8 @@ public class TeleOperations extends LinearOpMode {
         LiftL = hardwareMap.dcMotor.get("LiftL");
         LiftR = hardwareMap.dcMotor.get("LiftR");
 
-        BallG1 = hardwareMap.servo.get("BallG1");
-        BallG2 = hardwareMap.servo.get("BallG2");
+        BallG1 = hardwareMap.servo.get("BallG2");
+        BallG2 = hardwareMap.servo.get("BallG1");
 
         //RUN USING ENCODERS + RESET THEM ON START + REVERSE
         FL.setMode(DcMotor.RunMode.RESET_ENCODERS);
@@ -295,10 +295,16 @@ public class TeleOperations extends LinearOpMode {
             //BUTTON X IS USED TO TOGGLE LIFT UP AND DOWN
 
             boolean CurrentState = gamepad2.x;
+            boolean MoveLiftUpL = false;
+            boolean MoveLiftUpR = false;
+            boolean MoveLiftDownL = false;
+            boolean MoveLiftDownR = false;
 
             if(CurrentState == true && SwitchState != CurrentState && MoveLiftDown == false){
                 SwitchState = CurrentState;
                 MoveLiftUp = true;
+                MoveLiftUpL = true;
+                MoveLiftUpR = true;
                 tensionLift = true;
                 encodersLift = LiftL.getCurrentPosition() - 8000;
 
@@ -307,6 +313,8 @@ public class TeleOperations extends LinearOpMode {
             else if(CurrentState == true && SwitchState == CurrentState && MoveLiftUp == false){
                 SwitchState = false;
                 MoveLiftDown = true;
+                MoveLiftDownL = true;
+                MoveLiftDownR = true;
                 tensionLift = true;
 
                 Thread.sleep(5);
@@ -326,11 +334,18 @@ public class TeleOperations extends LinearOpMode {
                 if(!tensionLift) {
                     if (LiftL.getCurrentPosition() > encodersLift) {
                         LiftL.setPower(-1);
-                        LiftR.setPower(1);
                     } else {
                         LiftL.setPower(0);
+                        MoveLiftUpL = false;
+                    }
+                    if (LiftR.getCurrentPosition() < 8000) {
+                        LiftR.setPower(1);
+                    } else {
                         LiftR.setPower(0);
-                        MoveLiftUp = false;
+                        MoveLiftUpR = false;
+                    }
+                    if(!MoveLiftUpL && !MoveLiftUpR){
+                        MoveLiftUp =false;
                     }
                 }
            }
@@ -339,10 +354,17 @@ public class TeleOperations extends LinearOpMode {
                 if(tensionLift) {
                     if (LiftL.getCurrentPosition() < 0) {
                         LiftL.setPower(1);
-                        LiftR.setPower(-1);
+                        MoveLiftDownL = false;
                     } else {
                         LiftL.setPower(0);
+                    }
+                    if (LiftR.getCurrentPosition() > 0) {
+                        LiftR.setPower(-1);
+                        MoveLiftDownR = false;
+                    } else {
                         LiftR.setPower(0);
+                    }
+                    if(!MoveLiftDownL && !MoveLiftDownR){
                         tensionLift = false;
                     }
                 }
