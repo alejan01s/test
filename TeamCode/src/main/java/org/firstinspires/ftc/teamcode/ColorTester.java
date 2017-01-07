@@ -56,6 +56,7 @@ public class ColorTester extends LinearOpMode {
             isBlue = colorReader.blue() > 1 && colorReader.blue() > colorReader.red() ? true : false;
 
             colorReader.enableLed(false);
+            bottomOD.enableLed(true);
 
             if(isRed) {
                 redProcedure();
