@@ -46,6 +46,12 @@ public class TeleOperations extends LinearOpMode {
     public double posBallG1 = 0;
     public double posBallG2 = 0;
 
+    public double overridePosL = 0;
+    public double overridePosR = 0;
+
+    public boolean runUp = false;
+    public boolean runDown = false;
+
     //LAUNCHER MECHANISM
     public DcMotor LauncherM;
     public Servo Reloader;
@@ -119,6 +125,19 @@ public class TeleOperations extends LinearOpMode {
         //ROLLER POWER
         double Roll = 0;
 
+        boolean MoveLiftUpL = false;
+        boolean MoveLiftUpR = false;
+        boolean MoveLiftDownL = false;
+        boolean MoveLiftDownR = false;
+        boolean MoveLiftUpPos2L = false;
+        boolean MoveLiftUpPos2R = false;
+        boolean MoveLiftUpPos2 = false;
+        boolean manualOverrideLiftUp;
+        boolean manualOverrideLiftDown;
+        boolean lRanUp = false;
+        boolean rRanUp = false;
+        boolean lRanDown = false;
+        boolean rRanDown = false;
         tensionLift = false;
 
         waitForStart();
@@ -138,7 +157,7 @@ public class TeleOperations extends LinearOpMode {
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
             telemetry.addData("LiftL: ", LiftL.getCurrentPosition());
-            //telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
+            telemetry.addData("LiftR: ", LiftR.getCurrentPosition());
 
             telemetry.addData("BallG1 Encoder: ", BallG1.getPosition());
             telemetry.addData("BallG2 Encoder: ", BallG2.getPosition());
@@ -293,31 +312,123 @@ public class TeleOperations extends LinearOpMode {
             */
 
             //BUTTON X IS USED TO TOGGLE LIFT UP AND DOWN
+            //MANUAL OVERRIDE IS MAPPED TO TRIGGERS
 
-            boolean CurrentState = gamepad2.x;
-            boolean MoveLiftUpL = false;
-            boolean MoveLiftUpR = false;
-            boolean MoveLiftDownL = false;
-            boolean MoveLiftDownR = false;
+            //boolean CurrentState = gamepad2.x;
+            boolean BallGStowed = BallG1.getPosition()>0.07 ? false : true;
 
-            if(CurrentState == true && SwitchState != CurrentState && MoveLiftDown == false){
-                SwitchState = CurrentState;
-                MoveLiftUp = true;
-                MoveLiftUpL = true;
-                MoveLiftUpR = true;
-                tensionLift = true;
-                encodersLift = LiftL.getCurrentPosition() - 8000;
+            telemetry.addData("BallGStowed: ", BallGStowed);
 
-                Thread.sleep(5);
+            manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
+            manualOverrideLiftDown = gamepad2.dpad_down ? true : false;
+
+            if(manualOverrideLiftUp){
+                overridePosL = LiftL.getCurrentPosition() - 1;
+                overridePosR = LiftR.getCurrentPosition() + 1;
+                lRanUp = false;
+                rRanUp = false;
+                runUp = true;
             }
-            else if(CurrentState == true && SwitchState == CurrentState && MoveLiftUp == false){
-                SwitchState = false;
-                MoveLiftDown = true;
-                MoveLiftDownL = true;
-                MoveLiftDownR = true;
-                tensionLift = true;
+            else{
+                overridePosR = LiftR.getCurrentPosition();
+                overridePosL = LiftL.getCurrentPosition();
+            }
+            if(!runUp && manualOverrideLiftDown){
+                overridePosL = LiftL.getCurrentPosition() + 1;
+                overridePosR = LiftR.getCurrentPosition() - 1;
+                lRanDown = false;
+                rRanDown = false;
+                runDown = true;
+            }
+            else{
+                overridePosL = LiftL.getCurrentPosition();
+                overridePosR = LiftR.getCurrentPosition();
+            }
 
-                Thread.sleep(5);
+            if(runUp){
+                if(LiftL.getCurrentPosition() > overridePosL){
+                    LiftL.setPower(-.25);
+                }
+                else{
+                    LiftL.setPower(0);
+                    lRanUp = true;
+                }
+                if(LiftR.getCurrentPosition() < overridePosR){
+                    LiftR.setPower(.25);
+                }
+                else{
+                    LiftR.setPower(0);
+                    rRanUp = true;
+                }
+                if(lRanUp && rRanUp){
+                    runUp = false;
+                }
+            }
+            else if(runDown){
+                if(LiftL.getCurrentPosition() < overridePosL){
+                    LiftL.setPower(.25);
+                }
+                else{
+                    LiftL.setPower(0);
+                    lRanDown = false;
+                }
+                if(LiftR.getCurrentPosition() > overridePosR){
+                    LiftR.setPower(-.25);
+                }
+                else{
+                    LiftR.setPower(0);
+                    rRanDown = true;
+                }
+                if(lRanDown && rRanDown){
+                    runDown = false;
+                }
+            }
+
+            //BALL GRABBERS MUST NOT BE STOWED TO RUN LIFT AS A SAFETY MEASURE
+            if(!BallGStowed) {
+
+                /*
+                if (CurrentState == true && SwitchState != CurrentState && MoveLiftDown == false) {
+                    SwitchState = CurrentState;
+                    MoveLiftUp = true;
+                    MoveLiftUpL = true;
+                    MoveLiftUpR = true;
+                    tensionLift = true;
+                    encodersLift = LiftL.getCurrentPosition() - 8000;
+
+                    Thread.sleep(5);
+                } else if (CurrentState == true && SwitchState == CurrentState && MoveLiftUp == false) {
+                    SwitchState = false;
+                    MoveLiftDown = true;
+                    MoveLiftDownL = true;
+                    MoveLiftDownR = true;
+                    tensionLift = true;
+
+                    Thread.sleep(5);
+                }
+                */
+
+                if(gamepad2.x){
+                    MoveLiftUp = true;
+                    MoveLiftUpL = true;
+                    MoveLiftUpR = true;
+                    tensionLift = true;
+                    encodersLift = LiftL.getCurrentPosition() - 8000;
+                }
+
+                if(gamepad2.a){
+                    MoveLiftDown = true;
+                    MoveLiftDownL = true;
+                    MoveLiftDownR = true;
+                    tensionLift = true;
+                }
+
+                if(gamepad2.y){
+                    MoveLiftUpPos2 = true;
+                    MoveLiftUpPos2L = true;
+                    MoveLiftUpPos2R = true;
+                    tensionLift = true;
+                }
             }
 
             //RAISE LIFT
@@ -348,21 +459,21 @@ public class TeleOperations extends LinearOpMode {
                         MoveLiftUp =false;
                     }
                 }
-           }
+            }
             //LOWER LIFT
             else if(MoveLiftDown){
                 if(tensionLift) {
                     if (LiftL.getCurrentPosition() < 0) {
                         LiftL.setPower(1);
-                        MoveLiftDownL = false;
                     } else {
                         LiftL.setPower(0);
+                        MoveLiftDownL = false;
                     }
                     if (LiftR.getCurrentPosition() > 0) {
                         LiftR.setPower(-1);
-                        MoveLiftDownR = false;
                     } else {
                         LiftR.setPower(0);
+                        MoveLiftDownR = false;
                     }
                     if(!MoveLiftDownL && !MoveLiftDownR){
                         tensionLift = false;
@@ -379,6 +490,35 @@ public class TeleOperations extends LinearOpMode {
                     MoveLiftDown = false;
                 }
             }
+            //RAISE LIFT TO POS 2
+            else if(MoveLiftUpPos2){
+                if(tensionLift){
+                    LiftL.setPower(-.03);
+                    LiftR.setPower(.03);
+                    Thread.sleep(2500);
+                    LiftL.setPower(0);
+                    LiftR.setPower(0);
+                    Thread.sleep(1500);
+                    tensionLift = false;
+                }
+                if(!tensionLift){
+                    if (LiftL.getCurrentPosition() > -1500) {
+                        LiftL.setPower(-1);
+                    } else {
+                        LiftL.setPower(0);
+                        MoveLiftUpPos2L = false;
+                    }
+                    if (LiftR.getCurrentPosition() < 1500) {
+                        LiftR.setPower(1);
+                    } else {
+                        LiftR.setPower(0);
+                        MoveLiftUpPos2R = false;
+                    }
+                    if(!MoveLiftUpPos2L && !MoveLiftUpPos2R){
+                        MoveLiftUpPos2 =false;
+                    }
+                }
+            }
 
             /*
 
@@ -391,8 +531,8 @@ public class TeleOperations extends LinearOpMode {
 
             boolean isToggled = gamepad2.right_bumper;
 
-            manualOverrideBallG1 = gamepad2.right_stick_y > .25 || gamepad2.right_stick_y < -.25 ? true : false;
-            manualOverrideBallG2 = gamepad2.left_stick_y > .25 || gamepad2.left_stick_y < -.25 ? true : false;
+            manualOverrideBallG1 = gamepad2.left_stick_y > .25 || gamepad2.left_stick_y < -.25 ? true : false;
+            manualOverrideBallG2 = gamepad2.right_stick_y > .25 || gamepad2.right_stick_y < -.25 ? true : false;
 
             if(manualOverrideBallG1 || manualOverrideBallG2) {
                 if(gamepad2.right_stick_y > .25 || gamepad2.left_stick_y > .25) {
@@ -408,6 +548,7 @@ public class TeleOperations extends LinearOpMode {
                 posBallG1 = BallG1.getPosition();
                 posBallG2 = BallG2.getPosition();
             }
+
             if(manualOverrideBallG1){
                 BallG1.setPosition(posBallG1);
                 waitForDetoggle = true;
@@ -424,8 +565,11 @@ public class TeleOperations extends LinearOpMode {
 
             if(!manualOverrideBallG1 && !manualOverrideBallG2 && !waitForDetoggle) {
                 if (isToggled) {
-                    rollerState = rollerState != 2 ? rollerState + 1 : 0;
+                    rollerState = rollerState != 2 ? rollerState + 1 : 1;
                     Thread.sleep(500);
+                }
+                if(gamepad2.left_bumper){
+                    rollerState = 0;
                 }
                 //ball grabber 1 reach pos 0 to stow 1 to grab
                 //ball grabber 2 reach pos 1 to stow 0 to grab
