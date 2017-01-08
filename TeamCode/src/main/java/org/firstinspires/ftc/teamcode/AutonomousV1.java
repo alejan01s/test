@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 //Plan: Launch ball into goal, reload, launch second, then knock ball out of center goal and end.
-@Disabled
+
 @Autonomous (name = "AutonomousV1", group = "Sensor")
 public class AutonomousV1 extends DefinerClass {
 
@@ -26,6 +26,9 @@ public class AutonomousV1 extends DefinerClass {
 
     public DcMotor LauncherM;
     public Servo Reloader;
+
+    public Servo BallG1;
+    public Servo BallG2;
 
     public void initializeRobot () {
         LauncherM = hardwareMap.dcMotor.get("Launcher");

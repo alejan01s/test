@@ -323,7 +323,7 @@ public class TeleOperations extends LinearOpMode {
             manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
             manualOverrideLiftDown = gamepad2.dpad_down ? true : false;
             if(!cancelOverride) {
-                if (manualOverrideLiftUp) {
+                if (manualOverrideLiftUp && !runDown) {
                     overridePosL = LiftL.getCurrentPosition() - 1;
                     overridePosR = LiftR.getCurrentPosition() + 1;
                     lRanUp = false;
@@ -346,13 +346,13 @@ public class TeleOperations extends LinearOpMode {
 
                 if (runUp) {
                     if (LiftL.getCurrentPosition() > overridePosL) {
-                        LiftL.setPower(-.25);
+                        LiftL.setPower(-.65);
                     } else {
                         LiftL.setPower(0);
                         lRanUp = true;
                     }
                     if (LiftR.getCurrentPosition() < overridePosR) {
-                        LiftR.setPower(.25);
+                        LiftR.setPower(.65);
                     } else {
                         LiftR.setPower(0);
                         rRanUp = true;
