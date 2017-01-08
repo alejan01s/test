@@ -635,7 +635,7 @@ public class AutonV2 extends LinearOpMode {
             gravity  = imu.getGravity();
         }
         });
-        
+
         telemetry.addLine()
                 .addData("status", new Func<String>() {
                     @Override public String value() {
