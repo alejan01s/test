@@ -29,10 +29,15 @@ public class AutonomousV1 extends DefinerClass {
 
     public Servo BallG1;
     public Servo BallG2;
+    public Servo buttonPusher;
 
     public void initializeRobot () {
         LauncherM = hardwareMap.dcMotor.get("Launcher");
         Reloader = hardwareMap.servo.get("Reloader");
+
+        BallG1 = hardwareMap.servo.get("BallG2");
+        BallG2 = hardwareMap.servo.get("BallG1");
+        buttonPusher = hardwareMap.servo.get("buttonPusher");
 
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -70,6 +75,11 @@ public class AutonomousV1 extends DefinerClass {
             telemetry.addData("x", super.x);
 
             telemetry.update();
+
+            BallG1.setPosition(0);
+            BallG2.setPosition(1);
+            buttonPusher.setPosition(.5);
+
             //Step 1: Position Robot
             //if(step == 0) {
                 //super.runOpMode(Angle1, false, false);
