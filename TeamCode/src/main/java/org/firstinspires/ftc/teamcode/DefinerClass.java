@@ -31,6 +31,8 @@ public abstract class DefinerClass extends LinearOpMode{
     public DcMotor BR;
     public DcMotor BL;
 
+    public boolean done = false;
+
     //public DcMotor LiftL;
     //public DcMotor LiftR;
 
@@ -125,6 +127,9 @@ public abstract class DefinerClass extends LinearOpMode{
             }
             telemetry.addData("x", x);
             MoveToAngle(num);
+            if(done){
+                return;
+            }
             //LaunchBall(L);
             //Reload(R);
         }
@@ -207,19 +212,20 @@ public abstract class DefinerClass extends LinearOpMode{
             FL.setPower(0);
             BR.setPower(0);
             BL.setPower(0);
+            done = true;
             return;
         } else if (x < 10 + ang) {
             //turn clockwise
-            FR.setPower(-.5);
-            FL.setPower(0);
-            BR.setPower(-.5);
-            BL.setPower(0);
+            FR.setPower(-.15);
+            FL.setPower(0.15);
+            BR.setPower(-.15);
+            BL.setPower(0.15);
         } else if (x > ang - 10) {
             //turn counter-clockwise
-            FR.setPower(0);
-            FL.setPower(-.5);
-            BR.setPower(0);
-            BL.setPower(-.5);
+            FR.setPower(0.15);
+            FL.setPower(-.15);
+            BR.setPower(0.15);
+            BL.setPower(-.15);
         }
     }
     void composeTelemetry() {

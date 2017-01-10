@@ -66,8 +66,8 @@ public class AutonV2 extends DefinerClass {
     public OpticalDistanceSensor frontOD;
     public OpticalDistanceSensor backOD;
 
-    //public boolean isRed;
-    //public boolean isBlue;
+    public boolean isRed;
+    public boolean isBlue;
 
     //BUTTON PUSHER
     public Servo buttonPusher;
@@ -176,14 +176,14 @@ public class AutonV2 extends DefinerClass {
         */
 
         //SEQUENCE VARIABLE
-        int step = 0;
+        double step = 0;
 
         //REVOLUTION VARIABLES
         int NumberOfRevs1 = -200;
         int NumberOfRevs2 = -1650;
 
         //ANGLE VARIABLES
-        double Angle1 = 170;
+        double Angle1 = 180;
         double Angle2 = 280;
 
         //composeTelemetry();
@@ -193,8 +193,8 @@ public class AutonV2 extends DefinerClass {
             bottomOD.enableLed(true);
 
             colorSensor.enableLed(false);
-            //isRed = colorSensor.red() > 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-            //isBlue = colorSensor.blue() > 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+            isRed = colorSensor.red() > 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+            isBlue = colorSensor.blue() > 1 && colorSensor.blue() > colorSensor.red() ? true : false;
 
             telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
 
@@ -247,12 +247,8 @@ public class AutonV2 extends DefinerClass {
 
             //LAUNCH BALLS
             if(step == 1){
-                hasStarted = false;
-                turnCompleted = false;
-                if(!shoot) {
-                    shoot = true;
-                    step = step + 1;
-                }
+                shoot = true;
+                step = step + 1;
             }
             if(step == 2){
                 if(!shoot) {
@@ -260,271 +256,6 @@ public class AutonV2 extends DefinerClass {
                     step=step+1;
                 }
             }
-
-            //Move forward
-            if(step == 3){
-                /*
-                if(!hasStarted) {
-                    forward(1500);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step = step + 1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-                */
-                if(FL.getCurrentPosition() > NumberOfRevs2) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
-                }
-                else{
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step = step + 1;
-                }
-            }
-
-            //Strafe for time
-            if(step == 4){
-                if(!hasStarted) {
-                    strafeLeft(1650);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step = step + 1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-
-            //Turn 180
-            if(step == 5){
-                super.runOpMode(Angle1);
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                }
-                //super.runOpMode(Angle1, false, false);
-                //TimeUnit.SECONDS.sleep(2);
-                //step = step+1;
-            }
-
-            //Strafe for time
-            if(step == 6){
-                if(!hasStarted) {
-                    moveBack(250);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-
-            //Move to line
-            if(step == 7){
-                if(!hasStarted) {
-                    strafeLeft(400);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step = step + 1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-            //Set revs3
-            if(step == 8){
-                stopAtLine(1);
-                if(turnCompleted) {
-                    step = step + 1;
-                    turnCompleted = false;
-                }
-            }
-
-            //Position
-            if(step == 9){
-                if(!hasStarted) {
-                    forward(100);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step = step + 1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-
-            //set possible rev3
-            if(step == 10){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
-                step=step+1;
-            }
-
-            //Detect color
-            if(step == 11){
-                if(isRed()){
-                    //push button
-                    push = true;
-                    sleep(2000);
-                    step=step+1;
-                }
-                else if(isBlue()){
-                    //move forward confirm and push button
-                    if(FL.getCurrentPosition() < NumberOfRevs3) {
-                        BL.setPower(.1);
-                        BR.setPower(.1);
-                        FR.setPower(.1);
-                        FL.setPower(.1);
-                    }
-                    else {
-                        BL.setPower(0);
-                        BR.setPower(0);
-                        FR.setPower(0);
-                        FL.setPower(0);
-                        sleep(100);
-                        push = true;
-                        sleep(2000);
-                        step=step+1;
-                    }
-                }
-            }
-
-            //set next rev3
-            if(step == 12){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
-                step=step+1;
-            }
-
-            //move forward
-            if(step == 13){
-                if(!hasStarted) {
-                    moveBack(100);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-
-            //MOVE to line
-            if(step == 14){
-                stopAtLine(1);
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                }
-            }
-
-            //set revs3
-            if(step == 15){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
-                step=step+1;
-            }
-
-            //position
-            if(step == 16){
-                if(!hasStarted) {
-                    forward(100);
-                    hasStarted = false;
-                }
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-
-            //set possible rev3
-            if(step == 17){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
-                step=step+1;
-            }
-
-            //Detect color
-            if(step == 18){
-                if(isRed()){
-                    //push button
-                    push = true;
-                    sleep(2000);
-                    step=step+1;
-                }
-                else if(isBlue()){
-                    //move forward confirm and push button
-                    if(FL.getCurrentPosition() < NumberOfRevs3) {
-                        BL.setPower(.5);
-                        BR.setPower(.5);
-                        FR.setPower(.5);
-                        FL.setPower(.5);
-                    }
-                    else {
-                        BL.setPower(0);
-                        BR.setPower(0);
-                        FR.setPower(0);
-                        FL.setPower(0);
-                        sleep(100);
-                        push = true;
-                        sleep(2000);
-                        step=step+1;
-                    }
-                }
-            }
-
-            //TURN
-            if(step == 19){
-                super.runOpMode(Angle2);
-                if(turnCompleted){
-                    step=step+1;
-                }
-            }
-
-            //set rev3
-            if(step == 20){
-                turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() - 2000;
-                step=step+1;
-            }
-
-            //move forward
-            if(step == 21){
-                if(!hasStarted) {
-                    forward(2000);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step=step+1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-            }
-            /*
-
-            Button Pusher
-
-             */
-
-            if(!buttonInit){
-                buttonPusher.setPosition(.5);
-                if(push){
-                    buttonInit = true;
-                }
-            }
-            else{
-                buttonPusher.setPosition(.4);
-                sleep(700);
-                buttonPusher.setPosition(.6);
-                sleep(700);
-                buttonInit = false;
-            }
-
             if(shoot) {
                 if (!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
@@ -554,11 +285,315 @@ public class AutonV2 extends DefinerClass {
                         LauncherM.setPower(0);
                         resume = false;
                         EncoderClicks = EncoderClicks + 2510;
-                        sleep(500);
+                        Thread.sleep(500);
                         shoot = false;
-                        return;
                     }
                 }
+                idle();
+            }
+            //Move forward
+            if(step == 3){
+                /*
+                if(!hasStarted) {
+                    forward(1500);
+                    hasStarted = true;
+                }
+                if(turnCompleted){
+                    step = step + 1;
+                    turnCompleted = false;
+                    hasStarted = false;
+                }
+                */
+                if(!shoot) {
+                    if (FL.getCurrentPosition() > NumberOfRevs2) {
+                        BL.setPower(-.5);
+                        BR.setPower(-.5);
+                        FR.setPower(-.5);
+                        FL.setPower(-.5);
+                    } else {
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        step = step + 1;
+                    }
+                }
+            }
+
+            //Strafe for time
+            if(step == 4){
+                Thread.sleep(500);
+                if(!hasStarted) {
+                    strafeLeft(1650);
+                    hasStarted = true;
+                }
+                if(turnCompleted){
+                    step = step + 1;
+                    turnCompleted = false;
+                    hasStarted = false;
+                }
+            }
+
+            //Turn 180
+            if(step == 5){
+                super.runOpMode(Angle1);
+                //super.runOpMode(Angle1, false, false);
+                TimeUnit.SECONDS.sleep(2);
+                step = step+.5;
+            }
+            if(step == 5.5){
+                NumberOfRevs3 = FL.getCurrentPosition() + 75;
+                step = step + .5;
+            }
+            //Strafe for time
+            if(step == 6){
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.5);
+                    BR.setPower(.5);
+                    FR.setPower(.5);
+                    FL.setPower(.5);
+                }
+                else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + .5;
+                }
+            }
+            if(step == 6.5){
+                hasStarted = false;
+                step = step + .5;
+            }
+            //Move to line
+            if(step == 7){
+                if(!hasStarted) {
+                    strafeRight(400);
+                    hasStarted = true;
+                }
+                if(turnCompleted){
+                    step = step + 1;
+                    turnCompleted = false;
+                    hasStarted = false;
+                }
+            }
+            //Set revs3
+            if(step == 8){
+                stopAtLine(1);
+                if(turnCompleted) {
+                    step = step + 1;
+                    turnCompleted = false;
+                }
+            }
+
+            //Position
+            if(step == 9){
+                if(!hasStarted) {
+                    NumberOfRevs3 = FL.getCurrentPosition() - 100;
+                    hasStarted = true;
+                }
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(-.5);
+                }
+                else{
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
+                }
+            }
+
+            //set possible rev3
+            if(step == 10){
+                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                step=step+1;
+            }
+
+            //Detect color
+            if(step == 11){
+                if(isRed){
+                    //push button
+                    push = true;
+                    TimeUnit.MILLISECONDS.sleep(1500);
+                    step=step+1;
+                }
+                else if(isBlue){
+                    //move forward confirm and push button
+                    if(FL.getCurrentPosition() < NumberOfRevs3) {
+                        BL.setPower(.1);
+                        BR.setPower(.1);
+                        FR.setPower(.1);
+                        FL.setPower(.1);
+                    }
+                    else {
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        sleep(100);
+                        push = true;
+                        TimeUnit.MILLISECONDS.sleep(1500);
+                        step=step+1;
+                    }
+                }
+            }
+
+            //set next rev3
+            if(step == 12){
+                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                step=step+1;
+            }
+
+            //move forward
+            if(step == 13){
+                if(!hasStarted) {
+                    NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                    hasStarted = true;
+                }
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.5);
+                    BR.setPower(.5);
+                    FR.setPower(.5);
+                    FL.setPower(.5);
+                }
+                else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
+                }
+            }
+
+            //MOVE to line
+            if(step == 14){
+                hasStarted = false;
+                stopAtLine(1);
+                if(turnCompleted){
+                    step=step+1;
+                    turnCompleted = false;
+                }
+            }
+
+            //set revs3
+            if(step == 15){
+                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                step=step+1;
+            }
+
+            //position
+            if(step == 16){
+                if(!hasStarted) {
+                    NumberOfRevs3 = FL.getCurrentPosition() - 100;
+                    hasStarted = true;
+                }
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(-.5);
+                }
+                else{
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
+                }
+            }
+
+            //set possible rev3
+            if(step == 17){
+                hasStarted = false;
+                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                step=step+1;
+            }
+
+            //Detect color
+            if(step == 18){
+                if(isRed()){
+                    //push button
+                    push = true;
+                    TimeUnit.MILLISECONDS.sleep(1500);
+                    step=step+1;
+                }
+                else if(isBlue()){
+                    //move forward confirm and push button
+                    if(FL.getCurrentPosition() < NumberOfRevs3) {
+                        BL.setPower(.5);
+                        BR.setPower(.5);
+                        FR.setPower(.5);
+                        FL.setPower(.5);
+                    }
+                    else {
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        sleep(100);
+                        push = true;
+                        TimeUnit.MILLISECONDS.sleep(1500);
+                        step=step+1;
+                    }
+                }
+            }
+
+            //TURN
+            if(step == 19){
+                super.runOpMode(Angle2);
+                TimeUnit.SECONDS.sleep(2);
+                step=step+1;
+            }
+
+            //set rev3
+            if(step == 20){
+                turnCompleted = false;
+                NumberOfRevs3 = FL.getCurrentPosition() - 2000;
+                step=step+1;
+            }
+
+            //move forward
+            if(step == 21){
+                if(!hasStarted) {
+                    NumberOfRevs3 = FL.getCurrentPosition() - 2000;
+                    hasStarted = true;
+                }
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(-.5);
+                }
+                else{
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
+                }
+            }
+            /*
+
+            Button Pusher
+
+             */
+
+            if(!buttonInit){
+                buttonPusher.setPosition(.5);
+                if(push){
+                    buttonInit = true;
+                }
+            }
+            else{
+                buttonPusher.setPosition(.4);
+                sleep(700);
+                buttonPusher.setPosition(.6);
+                sleep(700);
+                buttonInit = false;
             }
         }
     }
@@ -635,6 +670,19 @@ public class AutonV2 extends DefinerClass {
         BR.setPower(.5);
         FL.setPower(.5);
         BL.setPower(-.5);
+        sleep(time);
+        FR.setPower(0);
+        BR.setPower(0);
+        FL.setPower(0);
+        BL.setPower(0);
+        turnCompleted = true;
+        return;
+    }
+    void strafeRight (int time) {
+        FR.setPower(.5);
+        BR.setPower(-.5);
+        FL.setPower(-.5);
+        BL.setPower(.5);
         sleep(time);
         FR.setPower(0);
         BR.setPower(0);

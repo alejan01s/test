@@ -439,13 +439,13 @@ public class TeleOperations extends LinearOpMode {
                     tensionLift = false;
                 }
                 if(!tensionLift) {
-                    if (LiftL.getCurrentPosition() > -8000) {
+                    if (LiftL.getCurrentPosition() > -8100) {
                         LiftL.setPower(-1);
                     } else {
                         LiftL.setPower(0);
                         MoveLiftUpL = false;
                     }
-                    if (LiftR.getCurrentPosition() < 8000) {
+                    if (LiftR.getCurrentPosition() < 8100) {
                         LiftR.setPower(1);
                     } else {
                         LiftR.setPower(0);
@@ -579,8 +579,8 @@ public class TeleOperations extends LinearOpMode {
                     BallG1.setPosition(0.25);
                     BallG2.setPosition(0.75);
                 } else if (rollerState == 2) {
-                    BallG1.setPosition(.339);
-                    BallG2.setPosition(.6559);
+                    BallG1.setPosition(.35);
+                    BallG2.setPosition(.64);
                 }
             }
 
