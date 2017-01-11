@@ -84,19 +84,7 @@ public abstract class DefinerClass extends LinearOpMode{
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
-        //LiftR.setDirection(DcMotor.Direction.REVERSE);
 
-        //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LiftL.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LiftR.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        //LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //LauncherM.setMode(DcMotor.RunMode.RESET_ENCODERS);
-    }
-
-    public void runOpMode(double num) throws InterruptedException{
-        initializeRobot();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -111,6 +99,21 @@ public abstract class DefinerClass extends LinearOpMode{
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        //LiftR.setDirection(DcMotor.Direction.REVERSE);
+
+        //LiftL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //LiftL.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        //LiftR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //LiftR.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        //LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //LauncherM.setMode(DcMotor.RunMode.RESET_ENCODERS);
+    }
+
+    public void runOpMode(double num, boolean init) throws InterruptedException{
+
+        if(init) {
+        }
         composeTelemetry();
         // Wait until we're told to go
         waitForStart();

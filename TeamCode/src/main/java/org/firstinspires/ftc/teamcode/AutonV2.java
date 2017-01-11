@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
 @Autonomous (name = "PrimaryAutonomousRED", group = "Sensor")
-public class AutonV2 extends DefinerClass {
+public class AutonV2 extends LinearOpMode {
 
     //MOTORS
     public DcMotor FR;
@@ -122,7 +122,7 @@ public class AutonV2 extends DefinerClass {
         buttonPress = false;
         push = false;
 
-        super.initializeRobot();
+        //super.initializeRobot();
     }
     /*
     boolean isRed () throws InterruptedException {
@@ -203,7 +203,7 @@ public class AutonV2 extends DefinerClass {
             telemetry.addData("BL: ", BL.getCurrentPosition());
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
-            telemetry.addData("x", super.x);
+            //telemetry.addData("x", super.x);
 
             telemetry.update();
 /*
@@ -244,7 +244,16 @@ public class AutonV2 extends DefinerClass {
                     step = step + 1;
                 }
             }
-
+            /*
+            if(step == .5){
+                super.runOpMode(30, true);
+                step = step + .25;
+            }
+            if(step == .75){
+                super.runOpMode(0, false);
+                step = step + .25;
+            }
+            */
             //LAUNCH BALLS
             if(step == 1){
                 shoot = true;
@@ -328,18 +337,31 @@ public class AutonV2 extends DefinerClass {
                     hasStarted = true;
                 }
                 if(turnCompleted){
-                    step = step + 1;
+                    step = step + .5;
                     turnCompleted = false;
                     hasStarted = false;
                 }
             }
-
+            if(step == 4.5){
+                NumberOfRevs3 = FL.getCurrentPosition() - 3000;
+                step = step + .5;
+            }
             //Turn 180
             if(step == 5){
-                super.runOpMode(Angle1);
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.25);
+                    BR.setPower(.25);
+                    FR.setPower(.25);
+                    FL.setPower(-.25);
+                }
+                else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + .5;
+                }
                 //super.runOpMode(Angle1, false, false);
-                TimeUnit.SECONDS.sleep(2);
-                step = step+.5;
             }
             if(step == 5.5){
                 NumberOfRevs3 = FL.getCurrentPosition() + 75;
@@ -537,16 +559,30 @@ public class AutonV2 extends DefinerClass {
                         sleep(100);
                         push = true;
                         TimeUnit.MILLISECONDS.sleep(1500);
-                        step=step+1;
+                        step=step+.5;
                     }
                 }
             }
-
+            if(step == 18.5){
+                NumberOfRevs3 = FL.getCurrentPosition() - 5000;
+                step = step + .5;
+            }
             //TURN
             if(step == 19){
-                super.runOpMode(Angle2);
-                TimeUnit.SECONDS.sleep(2);
-                step=step+1;
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.25);
+                    BR.setPower(.25);
+                    FR.setPower(.25);
+                    FL.setPower(-.25);
+                }
+                else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
+                }
+                //super.runOpMode(Angle2, false);
             }
 
             //set rev3
