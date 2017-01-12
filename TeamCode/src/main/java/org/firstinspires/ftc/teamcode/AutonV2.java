@@ -80,7 +80,7 @@ public class AutonV2 extends LinearOpMode {
     public double colorCheckStep = 0;
 
     public boolean hasStarted = false;
-
+    public boolean pushed = false;
     public void initializeRobot () {
 
 
@@ -231,10 +231,10 @@ public class AutonV2 extends LinearOpMode {
                 }
                 */
                 if(FL.getCurrentPosition() > NumberOfRevs1) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else{
                     BL.setPower(0);
@@ -333,7 +333,7 @@ public class AutonV2 extends LinearOpMode {
             if(step == 4){
                 Thread.sleep(500);
                 if(!hasStarted) {
-                    strafeLeft(1650);
+                    strafeLeft(1550);
                     hasStarted = true;
                 }
                 if(turnCompleted){
@@ -343,7 +343,8 @@ public class AutonV2 extends LinearOpMode {
                 }
             }
             if(step == 4.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 3000;
+                Thread.sleep(500);
+                NumberOfRevs3 = FL.getCurrentPosition() - 2500;
                 step = step + .5;
             }
             //Turn 180
@@ -369,28 +370,21 @@ public class AutonV2 extends LinearOpMode {
             }
             //Strafe for time
             if(step == 6){
-                if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.5);
-                    BR.setPower(.5);
-                    FR.setPower(.5);
-                    FL.setPower(.5);
-                }
-                else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
+                stopAtLine(1);
+                if(turnCompleted) {
                     step = step + .5;
+                    turnCompleted = false;
                 }
             }
             if(step == 6.5){
+                Thread.sleep(500);
                 hasStarted = false;
                 step = step + .5;
             }
             //Move to line
             if(step == 7){
                 if(!hasStarted) {
-                    strafeRight(400);
+                    strafeRight(650);
                     hasStarted = true;
                 }
                 if(turnCompleted){
@@ -401,24 +395,21 @@ public class AutonV2 extends LinearOpMode {
             }
             //Set revs3
             if(step == 8){
-                stopAtLine(1);
-                if(turnCompleted) {
-                    step = step + 1;
-                    turnCompleted = false;
-                }
+                Thread.sleep(500);
+                step = step + 1;
             }
 
             //Position
             if(step == 9){
                 if(!hasStarted) {
-                    NumberOfRevs3 = FL.getCurrentPosition() - 100;
+                    NumberOfRevs3 = FL.getCurrentPosition() - 500;
                     hasStarted = true;
                 }
                 if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else{
                     BL.setPower(0);
@@ -431,7 +422,7 @@ public class AutonV2 extends LinearOpMode {
 
             //set possible rev3
             if(step == 10){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                NumberOfRevs3 = FL.getCurrentPosition() + 300;
                 step=step+1;
             }
 
@@ -440,8 +431,10 @@ public class AutonV2 extends LinearOpMode {
                 if(isRed){
                     //push button
                     push = true;
-                    TimeUnit.MILLISECONDS.sleep(1500);
-                    step=step+1;
+
+                    if(pushed) {
+                        step = step + 1;
+                    }
                 }
                 else if(isBlue){
                     //move forward confirm and push button
@@ -459,13 +452,16 @@ public class AutonV2 extends LinearOpMode {
                         sleep(100);
                         push = true;
                         TimeUnit.MILLISECONDS.sleep(1500);
-                        step=step+1;
+                        if(pushed) {
+                            step = step + 1;
+                        }
                     }
                 }
             }
 
             //set next rev3
             if(step == 12){
+                pushed = false;
                 NumberOfRevs3 = FL.getCurrentPosition() + 100;
                 step=step+1;
             }
@@ -531,7 +527,7 @@ public class AutonV2 extends LinearOpMode {
             //set possible rev3
             if(step == 17){
                 hasStarted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                NumberOfRevs3 = FL.getCurrentPosition() + 300;
                 step=step+1;
             }
 
@@ -540,8 +536,9 @@ public class AutonV2 extends LinearOpMode {
                 if(isRed()){
                     //push button
                     push = true;
-                    TimeUnit.MILLISECONDS.sleep(1500);
-                    step=step+1;
+                    if(pushed) {
+                        step = step + .5;
+                    }
                 }
                 else if(isBlue()){
                     //move forward confirm and push button
@@ -559,11 +556,15 @@ public class AutonV2 extends LinearOpMode {
                         sleep(100);
                         push = true;
                         TimeUnit.MILLISECONDS.sleep(1500);
-                        step=step+.5;
+                        if(pushed) {
+                            step = step + .5;
+                        }
                     }
                 }
             }
             if(step == 18.5){
+                pushed = false;
+                TimeUnit.SECONDS.sleep(2);
                 NumberOfRevs3 = FL.getCurrentPosition() - 5000;
                 step = step + .5;
             }
@@ -630,6 +631,7 @@ public class AutonV2 extends LinearOpMode {
                 buttonPusher.setPosition(.6);
                 sleep(700);
                 buttonInit = false;
+                pushed = true;
             }
         }
     }

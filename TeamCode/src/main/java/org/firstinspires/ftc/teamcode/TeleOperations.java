@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by aleja on 10/14/2016.
  */
@@ -52,6 +54,8 @@ public class TeleOperations extends LinearOpMode {
     public boolean runUp = false;
     public boolean runDown = false;
     public boolean cancelOverride = false;
+
+    public long buttonHold;
 
     //LAUNCHER MECHANISM
     public DcMotor LauncherM;
@@ -323,9 +327,9 @@ public class TeleOperations extends LinearOpMode {
             manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
             manualOverrideLiftDown = gamepad2.dpad_down ? true : false;
             if(!cancelOverride) {
-                if (manualOverrideLiftUp && !runDown) {
-                    overridePosL = LiftL.getCurrentPosition() - 1;
-                    overridePosR = LiftR.getCurrentPosition() + 1;
+                if (manualOverrideLiftUp) {
+                    overridePosL = LiftL.getCurrentPosition() - 5;
+                    overridePosR = LiftR.getCurrentPosition() + 5;
                     lRanUp = false;
                     rRanUp = false;
                     runUp = true;
@@ -333,7 +337,7 @@ public class TeleOperations extends LinearOpMode {
                     overridePosR = LiftR.getCurrentPosition();
                     overridePosL = LiftL.getCurrentPosition();
                 }
-                if (!runUp && manualOverrideLiftDown) {
+                if (manualOverrideLiftDown) {
                     overridePosL = LiftL.getCurrentPosition() + 1;
                     overridePosR = LiftR.getCurrentPosition() - 1;
                     lRanDown = false;
@@ -439,7 +443,7 @@ public class TeleOperations extends LinearOpMode {
                     tensionLift = false;
                 }
                 if(!tensionLift) {
-                    if (LiftL.getCurrentPosition() > -8100) {
+                    if (LiftL.getCurrentPosition() > -8175) {
                         LiftL.setPower(-1);
                     } else {
                         LiftL.setPower(0);
@@ -500,13 +504,13 @@ public class TeleOperations extends LinearOpMode {
                     tensionLift = false;
                 }
                 if(!tensionLift){
-                    if (LiftL.getCurrentPosition() > -1500) {
+                    if (LiftL.getCurrentPosition() > -1000) {
                         LiftL.setPower(-1);
                     } else {
                         LiftL.setPower(0);
                         MoveLiftUpPos2L = false;
                     }
-                    if (LiftR.getCurrentPosition() < 1500) {
+                    if (LiftR.getCurrentPosition() < 1000) {
                         LiftR.setPower(1);
                     } else {
                         LiftR.setPower(0);
@@ -589,7 +593,7 @@ public class TeleOperations extends LinearOpMode {
             BUTTON PUSHER
 
             */
-
+            /*
             if(!buttonInit){
                 buttonPusher.setPosition(.5);
                 if(gamepad1.y){
@@ -603,7 +607,18 @@ public class TeleOperations extends LinearOpMode {
                 Thread.sleep(1500);
                 buttonInit = false;
             }
-
+            */
+            if(gamepad1.y){
+                buttonPusher.setPosition(.4);
+                TimeUnit.MILLISECONDS.sleep(100);
+                buttonHold = buttonHold + 100;
+            }
+            else{
+                buttonPusher.setPosition(.6);
+                sleep(buttonHold);
+                buttonPusher.setPosition(.5);
+                buttonHold = 0;
+            }
         }
     }
 }
