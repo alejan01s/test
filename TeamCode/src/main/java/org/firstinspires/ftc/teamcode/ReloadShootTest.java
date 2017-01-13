@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by aleja on 12/5/2016.
  */
 
+@Disabled
 @TeleOp(name = "Reload and Shoot Practice", group = "Linear Opmode")
 public class ReloadShootTest extends LinearOpMode {
 

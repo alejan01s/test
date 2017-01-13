@@ -23,7 +23,7 @@ import java.util.Locale;
  */
 
 //heading returns rotation on x, pitch on y, yaw on z
-
+@Disabled
 @Autonomous(name="Sensor", group = "Sensor")
 public abstract class imuAngleReads extends LinearOpMode {
 

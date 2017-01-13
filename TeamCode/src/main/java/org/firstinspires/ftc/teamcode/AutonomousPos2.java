@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 //Plan: Launch ball into goal, reload, launch second, then knock ball out of center goal and end.
-@Disabled
+
 @Autonomous (name = "AutonomousPos2", group = "Sensor")
 public class AutonomousPos2 extends DefinerClass {
 

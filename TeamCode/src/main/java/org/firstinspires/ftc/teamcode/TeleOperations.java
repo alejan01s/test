@@ -56,6 +56,7 @@ public class TeleOperations extends LinearOpMode {
     public boolean cancelOverride = false;
 
     public long buttonHold;
+    public boolean moveButton;
 
     //LAUNCHER MECHANISM
     public DcMotor LauncherM;
@@ -194,7 +195,7 @@ public class TeleOperations extends LinearOpMode {
                     }
                     if (pause) {
                         LauncherM.setPower(0.03);
-                        Reloader.setPosition(256);
+                        Reloader.setPosition(1);
                         resume = true;
                         pause = false;
                     }
@@ -205,7 +206,7 @@ public class TeleOperations extends LinearOpMode {
                     }
                     else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2515) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2515)) {
                         LauncherM.setPower(1);
-                        Reloader.setPosition(0);
+                        Reloader.setPosition(0.1);
                     } else if (LauncherM.getCurrentPosition() > 2255 + (EncoderClicks - 2515) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
@@ -443,7 +444,7 @@ public class TeleOperations extends LinearOpMode {
                     tensionLift = false;
                 }
                 if(!tensionLift) {
-                    if (LiftL.getCurrentPosition() > -8175) {
+                    if (LiftL.getCurrentPosition() > -8015) {
                         LiftL.setPower(-1);
                     } else {
                         LiftL.setPower(0);
@@ -610,13 +611,17 @@ public class TeleOperations extends LinearOpMode {
             */
             if(gamepad1.y){
                 buttonPusher.setPosition(.4);
-                TimeUnit.MILLISECONDS.sleep(100);
-                buttonHold = buttonHold + 100;
+                moveButton = true;
+                TimeUnit.MILLISECONDS.sleep(5);
+                buttonHold = buttonHold + 5;
             }
             else{
-                buttonPusher.setPosition(.6);
+                if(moveButton) {
+                    buttonPusher.setPosition(.6);
+                }
                 sleep(buttonHold);
                 buttonPusher.setPosition(.5);
+                moveButton = false;
                 buttonHold = 0;
             }
         }

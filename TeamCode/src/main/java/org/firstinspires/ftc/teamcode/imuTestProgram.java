@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -23,6 +24,7 @@ import java.util.Locale;
 
 //heading returns rotation on x, pitch on y, yaw on z
 
+@Disabled
 @Autonomous(name="SensorTest", group = "Sensor")
 public class imuTestProgram extends LinearOpMode {
 

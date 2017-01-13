@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * Created by aleja on 7/10/2016.
  */
+@Disabled
 @TeleOp(name="Template: Linear OpMode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 
 public class TeloOpPractice extends LinearOpMode{
