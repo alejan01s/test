@@ -5,6 +5,7 @@ import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -24,7 +25,7 @@ import java.util.Locale;
 
 //heading returns rotation on x, pitch on y, yaw on z
 @Disabled
-@Autonomous(name="Sensor", group = "Sensor")
+@TeleOp(name="Sensor", group = "Sensor")
 public abstract class imuAngleReads extends LinearOpMode {
 
     public DcMotor BL;
@@ -84,13 +85,13 @@ public abstract class imuAngleReads extends LinearOpMode {
 
         // Loop and update the dashboard
         while (opModeIsActive()) {
-            telemetry.update();
             x = Double.parseDouble(formatAngle(angles.angleUnit, angles.firstAngle));
             if (x < 0) {
                 x = x + 360;
             }
             telemetry.addData("x", x);
-            MoveToAngle(num);
+            telemetry.update();
+            //MoveToAngle(num);
         }
     }
 

@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * Created by aleja on 12/26/2016.
  */
 
-@Disabled
+
 @TeleOp(name = "ColorSensorTester", group = "Linear Opmode")
 public class ColorTester extends LinearOpMode {
 
@@ -59,6 +59,15 @@ public class ColorTester extends LinearOpMode {
 
             colorReader.enableLed(false);
             bottomOD.enableLed(true);
+
+            if(gamepad1.a){
+                frontOD.enableLed(true);
+                backOD.enableLed(true);
+            }
+            else{
+                frontOD.enableLed(false);
+                backOD.enableLed(false);
+            }
 
             if(isRed) {
                 redProcedure();

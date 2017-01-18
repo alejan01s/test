@@ -4,6 +4,7 @@ import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -12,8 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 /**
  * Created by aleja on 10/9/2016.
  */
+
 @Disabled
-@Autonomous(name="testForFunction", group = "Sensor")
+@TeleOp(name="testForFunction", group = "Sensor")
 public class angleReadTest extends imuAngleReads {
 
     @Override
@@ -24,10 +26,10 @@ public class angleReadTest extends imuAngleReads {
     public void runOpMode() throws InterruptedException{
         initializeRobot();
         waitForStart();
-        super.runOpMode(270);
+        //super.runOpMode(270);
         while(opModeIsActive()){
 
-            telemetry.addData("x", x);
+            telemetry.addData("x", super.x);
             telemetry.update();
             idle();
         }

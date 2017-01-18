@@ -178,28 +178,28 @@ public class AutonomousV1 extends DefinerClass {
                 if(!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.08);
+                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(1);
                     }
                     else{
                         pause = true;
                     }
                     if (pause) {
                         //INPUT RELOAD FUNCTION WHEN READY HERE
-                        LauncherM.setPower(0.03);
-                        Reloader.setPosition(256);
+                        LauncherM.setPower(0.1);
+                        Reloader.setPosition(.65);
                         resume = true;
                         pause = false;
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1300 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.05);
+                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1150 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.08);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1300 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
+                    else if (LauncherM.getCurrentPosition() > 1150 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                        Reloader.setPosition(0);
-                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                        Reloader.setPosition(0.1);
+                    } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,18 +8,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by aleja on 12/4/2016.
@@ -51,20 +37,14 @@ public class AutonV2 extends LinearOpMode {
 
     public boolean hasChanged = false;
 
-    /*
-    //IMU
-    BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
-    public double x;
-    */
     public boolean turnCompleted = false;
 
     //SENSORS
     public ColorSensor colorSensor;
     public OpticalDistanceSensor bottomOD;
     public OpticalDistanceSensor frontOD;
-    public OpticalDistanceSensor backOD;
+    public OpticalDistanceSensor colorOD;
+    //public GyroSensor gyro;
 
     public boolean isRed;
     public boolean isBlue;
@@ -81,6 +61,11 @@ public class AutonV2 extends LinearOpMode {
 
     public boolean hasStarted = false;
     public boolean pushed = false;
+
+    public boolean stopAtLine = false;
+    public boolean nearPush = false;
+    public boolean OppPushSequence = false;
+    public boolean OppPushSequence2 = false;
     public void initializeRobot () {
 
 
@@ -110,7 +95,7 @@ public class AutonV2 extends LinearOpMode {
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
-        backOD = hardwareMap.opticalDistanceSensor.get("backOD");
+        colorOD = hardwareMap.opticalDistanceSensor.get("backOD");
 
         //BUTTON PUSHER
         buttonPusher = hardwareMap.servo.get("buttonPusher");
@@ -122,7 +107,6 @@ public class AutonV2 extends LinearOpMode {
         buttonPress = false;
         push = false;
 
-        //super.initializeRobot();
     }
     /*
     boolean isRed () throws InterruptedException {
@@ -161,40 +145,33 @@ public class AutonV2 extends LinearOpMode {
 
         initializeRobot();
 
-        /*
-        //IMU
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        */
-
         //SEQUENCE VARIABLE
         double step = 0;
 
         //REVOLUTION VARIABLES
         int NumberOfRevs1 = -200;
-        int NumberOfRevs2 = -1650;
+        int NumberOfRevs2 = -1700;
 
         //ANGLE VARIABLES
         double Angle1 = 180;
         double Angle2 = 280;
 
-        //composeTelemetry();
+        imuTest imu = new imuTest("imu", hardwareMap);
+
+        while (!isStarted()) {
+            telemetry.addData("Status", "Initialization Complete");
+            telemetry.update();
+        }
+
         waitForStart();
         while(opModeIsActive()){
 
             bottomOD.enableLed(true);
 
             colorSensor.enableLed(false);
-            isRed = colorSensor.red() > 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-            isBlue = colorSensor.blue() > 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+
+            isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+            isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
 
             telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
 
@@ -203,16 +180,26 @@ public class AutonV2 extends LinearOpMode {
             telemetry.addData("BL: ", BL.getCurrentPosition());
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
-            //telemetry.addData("x", super.x);
+            telemetry.addData("OD: ", bottomOD.getRawLightDetected());
+            telemetry.addData("colorOD", colorOD.getRawLightDetected());
+            telemetry.addData("RGB: ", colorSensor.argb());
+            telemetry.addData("Red: ", colorSensor.red());
+            telemetry.addData("Blue: ", colorSensor.blue());
 
-            telemetry.update();
-/*
-            //ESTABLISH ROTATION
-            super.x = Double.parseDouble(formatAngle(angles.angleUnit, angles.firstAngle));
-            if (super.x < 0) {
-                super.x = super.x + 360;
+            double[] angles = imu.getAngles();
+            double yaw = angles[0];
+            double pitch = angles[1];
+            double roll = angles[2];
+            double x = yaw;
+
+            if(x < 0){
+                x = x + 360;
             }
-*/
+            // this adds telemetry data using the telemetrize() method in the MasqAdafruitIMU class
+            telemetry.addData(imu.getName(), imu.telemetrize());
+            telemetry.addData("X: ", x);
+            telemetry.update();
+
             BallG1.setPosition(0);
             BallG2.setPosition(1);
 
@@ -220,16 +207,6 @@ public class AutonV2 extends LinearOpMode {
 
             //MOVE FORWARD
             if(step == 0){
-                /*
-                if(!hasStarted) {
-                    forward(100);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    shoot = true;
-                    step = step + 1;
-                }
-                */
                 if(FL.getCurrentPosition() > NumberOfRevs1) {
                     BL.setPower(-.25);
                     BR.setPower(-.25);
@@ -244,16 +221,6 @@ public class AutonV2 extends LinearOpMode {
                     step = step + 1;
                 }
             }
-            /*
-            if(step == .5){
-                super.runOpMode(30, true);
-                step = step + .25;
-            }
-            if(step == .75){
-                super.runOpMode(0, false);
-                step = step + .25;
-            }
-            */
             //LAUNCH BALLS
             if(step == 1){
                 shoot = true;
@@ -269,25 +236,25 @@ public class AutonV2 extends LinearOpMode {
                 if (!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.08);
+                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(1);
                     } else {
                         pause = true;
                     }
                     if (pause) {
                         //INPUT RELOAD FUNCTION WHEN READY HERE
-                        LauncherM.setPower(0.03);
-                        Reloader.setPosition(256);
+                        LauncherM.setPower(0.1);
+                        Reloader.setPosition(.65);
                         resume = true;
                         pause = false;
                     }
                 }
                 if (resume) {
-                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.05);
-                    } else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2510)) {
+                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 1150 + (EncoderClicks - 2510)) {
+                        LauncherM.setPower(.1);
+                    } else if (LauncherM.getCurrentPosition() > 1150 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                        Reloader.setPosition(0);
+                        Reloader.setPosition(0.1);
                     } else if (LauncherM.getCurrentPosition() > 2255 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
@@ -302,17 +269,6 @@ public class AutonV2 extends LinearOpMode {
             }
             //Move forward
             if(step == 3){
-                /*
-                if(!hasStarted) {
-                    forward(1500);
-                    hasStarted = true;
-                }
-                if(turnCompleted){
-                    step = step + 1;
-                    turnCompleted = false;
-                    hasStarted = false;
-                }
-                */
                 if(!shoot) {
                     if (FL.getCurrentPosition() > NumberOfRevs2) {
                         BL.setPower(-.5);
@@ -331,9 +287,9 @@ public class AutonV2 extends LinearOpMode {
 
             //Strafe for time
             if(step == 4){
-                Thread.sleep(500);
+                Thread.sleep(100);
                 if(!hasStarted) {
-                    strafeLeft(1600);
+                    strafeLeft(2300);
                     hasStarted = true;
                 }
                 if(turnCompleted){
@@ -343,28 +299,32 @@ public class AutonV2 extends LinearOpMode {
                 }
             }
             if(step == 4.5){
-                Thread.sleep(500);
-                NumberOfRevs3 = FL.getCurrentPosition() - 2400;
-                step = step + .5;
-            }
-            //Turn 180
-            if(step == 5){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(.25);
-                    FR.setPower(.25);
-                    FL.setPower(-.25);
-                }
-                else {
-                    BL.setPower(0);
-                    BR.setPower(0);
+                if (x > 181.5 && x < 182.5) {
+                    //has reached angle therefore end loop
                     FR.setPower(0);
                     FL.setPower(0);
-                    step = step + .5;
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                } else if (x < 181.5) {
+                    //turn clockwise
+                    FR.setPower(-.2);
+                    FL.setPower(.2);
+                    BR.setPower(-.2);
+                    BL.setPower(.2);
+                } else if (x > 182.5) {
+                    //turn counter-clockwise
+                    FR.setPower(0.2);
+                    FL.setPower(-.2);
+                    BR.setPower(0.2);
+                    BL.setPower(-.2);
                 }
-                //super.runOpMode(Angle1, false, false);
+                if(turnCompleted){
+                    step = step + 1;
+                }
             }
             if(step == 5.5){
+                turnCompleted = false;
                 NumberOfRevs3 = FL.getCurrentPosition() + 75;
                 step = step + .5;
             }
@@ -377,15 +337,25 @@ public class AutonV2 extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                Thread.sleep(500);
+                turnCompleted = false;
+                Thread.sleep(5);
                 hasStarted = false;
                 step = step + .5;
             }
             //Move to line
             if(step == 7){
-                if(!hasStarted) {
-                    strafeRight(620);
-                    hasStarted = true;
+                if(colorOD.getRawLightDetected() < .012) {
+                    FR.setPower(.1);
+                    BR.setPower(-.1);
+                    FL.setPower(-.1);
+                    BL.setPower(.1);
+                }
+                else {
+                    FR.setPower(0);
+                    BR.setPower(0);
+                    FL.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
                 }
                 if(turnCompleted){
                     step = step + 1;
@@ -395,14 +365,15 @@ public class AutonV2 extends LinearOpMode {
             }
             //Set revs3
             if(step == 8){
-                Thread.sleep(500);
+                Thread.sleep(100);
+                turnCompleted = false;
                 step = step + 1;
             }
 
             //Position
             if(step == 9){
                 if(!hasStarted) {
-                    NumberOfRevs3 = FL.getCurrentPosition() - 500;
+                    NumberOfRevs3 = FL.getCurrentPosition() - 475;
                     hasStarted = true;
                 }
                 if(FL.getCurrentPosition() > NumberOfRevs3) {
@@ -422,23 +393,32 @@ public class AutonV2 extends LinearOpMode {
 
             //set possible rev3
             if(step == 10){
-                NumberOfRevs3 = FL.getCurrentPosition() + 300;
+                sleep(100);
+                NumberOfRevs3 = FL.getCurrentPosition() + 275;
                 step=step+1;
             }
 
             //Detect color
             if(step == 11){
-                if(isRed){
+                isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+                isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                if(isRed && !OppPushSequence){
                     //push button
+                    nearPush = true;
+                }
+                else if(isBlue && !nearPush){
+                    //move forward confirm and push button
+                    OppPushSequence = true;
+                }
+                if(nearPush){
                     if(!pushed) {
                         push = true;
                     }
-                    if(pushed) {
+                    else {
                         step = step + 1;
                     }
                 }
-                else if(isBlue){
-                    //move forward confirm and push button
+                else if(OppPushSequence){
                     if(FL.getCurrentPosition() < NumberOfRevs3) {
                         BL.setPower(.1);
                         BR.setPower(.1);
@@ -450,31 +430,93 @@ public class AutonV2 extends LinearOpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
-                        sleep(100);
-                        if(!pushed) {
+                        sleep(5);
+                        //isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+                        //isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                        if (!pushed) {
                             push = true;
                         }
-                        if(pushed) {
+                        if (pushed) {
                             step = step + 1;
                         }
+                        /*
+                        if(isRed) {
+                            if (!pushed) {
+                                push = true;
+                            }
+                            if (pushed) {
+                                step = step + 1;
+                            }
+                        }
+                        else{
+                            if(FL.getCurrentPosition() > NumberOfRevs3) {
+                                BL.setPower(-.1);
+                                BR.setPower(-.1);
+                                FR.setPower(-.1);
+                                FL.setPower(-.1);
+                            }
+                            else {
+                                BL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                FL.setPower(0);
+                                sleep(200);
+                                if (!pushed) {
+                                    push = true;
+                                }
+                                if (pushed) {
+                                    step = step + 1;
+                                }
+                            }
+                        }
+                        */
                     }
                 }
             }
-
+            /*
+            if(step == 12){
+                if (x > 181.5 && x < 182.5) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                } else if (x < 181.5) {
+                    //turn clockwise
+                    FR.setPower(.2);
+                    FL.setPower(-.2);
+                    BR.setPower(.2);
+                    BL.setPower(-.2);
+                } else if (x > 182.5) {
+                    //turn counter-clockwise
+                    FR.setPower(-0.2);
+                    FL.setPower(.2);
+                    BR.setPower(-0.2);
+                    BL.setPower(.2);
+                }
+                if(turnCompleted){
+                    step = step + .5;
+                }
+            }
+            */
             //set next rev3
             if(step == 12){
+                turnCompleted = false;
+                nearPush = false;
+                OppPushSequence = false;
                 pushed = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                NumberOfRevs3 = FL.getCurrentPosition() + 750;
                 step=step+1;
             }
 
             //move forward
             if(step == 13){
                 if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.5);
-                    BR.setPower(.5);
-                    FR.setPower(.5);
-                    FL.setPower(.5);
+                    BL.setPower(.4);
+                    BR.setPower(.4);
+                    FR.setPower(.4);
+                    FL.setPower(.4);
                 }
                 else {
                     BL.setPower(0);
@@ -487,27 +529,79 @@ public class AutonV2 extends LinearOpMode {
 
             //MOVE to line
             if(step == 14){
-                hasStarted = false;
-                stopAtLine(1);
+                stopAtLine2(1);
                 if(turnCompleted){
-                    step=step+1;
+                    step=step+.5;
                     turnCompleted = false;
                 }
             }
-
+            if(step == 14.5){
+                if (x > 181.5 && x < 182.5) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                } else if (x < 181.5) {
+                    //turn clockwise
+                    FR.setPower(-.1);
+                    FL.setPower(.1);
+                    BR.setPower(-.1);
+                    BL.setPower(.1);
+                } else if (x > 182.5) {
+                    //turn counter-clockwise
+                    FR.setPower(0.1);
+                    FL.setPower(-.1);
+                    BR.setPower(0.1);
+                    BL.setPower(-.1);
+                }
+                if(turnCompleted) {
+                    step = step + .1;
+                }
+            }
+            if(step == 14.6){
+                turnCompleted = false;
+                step = step + .15;
+            }
+            if(step == 14.75){
+                sleep(100);
+                if(colorOD.getRawLightDetected() < .009) {
+                    FR.setPower(.1);
+                    BR.setPower(-.1);
+                    FL.setPower(-.1);
+                    BL.setPower(.1);
+                }
+                else {
+                    FR.setPower(0);
+                    BR.setPower(0);
+                    FL.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                }
+                if(turnCompleted){
+                    step = step + .25;
+                    turnCompleted = false;
+                    hasStarted = false;
+                }
+            }
             //set revs3
             if(step == 15){
-                NumberOfRevs3 = FL.getCurrentPosition() + 100;
+                turnCompleted = false;
+                OppPushSequence = false;
+                pushed = false;
+                sleep(100);
+                NumberOfRevs3 = FL.getCurrentPosition() - 525;
                 step=step+1;
             }
 
             //position
             if(step == 16){
                 if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else{
                     BL.setPower(0);
@@ -520,29 +614,41 @@ public class AutonV2 extends LinearOpMode {
 
             //set possible rev3
             if(step == 17){
+                turnCompleted = false;
+                OppPushSequence = false;
+                pushed = false;
                 hasStarted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 300;
+                sleep(100);
+                NumberOfRevs3 = FL.getCurrentPosition() + 290;
                 step=step+1;
             }
 
             //Detect color
             if(step == 18){
-                if(isRed){
+                isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+                isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                if(isRed && !OppPushSequence2){
                     //push button
+                    nearPush = true;
+                }
+                else if(isBlue && !nearPush){
+                    //move forward confirm and push button
+                    OppPushSequence2 = true;
+                }
+                if(nearPush){
                     if(!pushed) {
                         push = true;
                     }
-                    if(pushed) {
-                        step = step + .5;
+                    else {
+                        step = step + 1;
                     }
                 }
-                else if(isBlue()){
-                    //move forward confirm and push button
+                if(OppPushSequence2){
                     if(FL.getCurrentPosition() < NumberOfRevs3) {
-                        BL.setPower(.5);
-                        BR.setPower(.5);
-                        FR.setPower(.5);
-                        FL.setPower(.5);
+                        BL.setPower(.1);
+                        BR.setPower(.1);
+                        FR.setPower(.1);
+                        FL.setPower(.1);
                     }
                     else {
                         BL.setPower(0);
@@ -550,57 +656,97 @@ public class AutonV2 extends LinearOpMode {
                         FR.setPower(0);
                         FL.setPower(0);
                         sleep(100);
-                        if(!pushed){
+                        if (!pushed) {
                             push = true;
                         }
-                        if(pushed) {
+                        if (pushed) {
                             step = step + .5;
                         }
+                        //isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
+                        //isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                        /*
+                        if(isRed) {
+                            if (!pushed) {
+                                push = true;
+                            }
+                            if (pushed) {
+                                step = step + .5;
+                            }
+                        }
+                        else{
+                            if(FL.getCurrentPosition() > NumberOfRevs3) {
+                                BL.setPower(-.1);
+                                BR.setPower(-.1);
+                                FR.setPower(-.1);
+                                FL.setPower(-.1);
+                            }
+                            else {
+                                BL.setPower(0);
+                                BR.setPower(0);
+                                FR.setPower(0);
+                                FL.setPower(0);
+                                if (!pushed) {
+                                    push = true;
+                                }
+                                if (pushed) {
+                                    step = step + .5;
+                                }
+                            }
+                        }
+                        */
                     }
                 }
             }
             if(step == 18.5){
+                nearPush = false;
+                OppPushSequence = false;
                 pushed = false;
-                TimeUnit.SECONDS.sleep(2);
-                NumberOfRevs3 = FL.getCurrentPosition() - 5000;
+                sleep(100);
+                NumberOfRevs3 = FL.getCurrentPosition() + 500;
+                //add strafe
                 step = step + .5;
             }
             //TURN
             if(step == 19){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(.25);
-                    FR.setPower(.25);
-                    FL.setPower(-.25);
-                }
-                else {
-                    BL.setPower(0);
-                    BR.setPower(0);
+                if (x > 223 && x < 227) {
+                    //has reached angle therefore end loop
                     FR.setPower(0);
                     FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
                     step = step + 1;
+                } else if (x < 223) {
+                    //turn clockwise
+                    FR.setPower(-.25);
+                    FL.setPower(.25);
+                    BR.setPower(-.25);
+                    BL.setPower(.25);
+                } else if (x > 227) {
+                    //turn counter-clockwise
+                    FR.setPower(0.25);
+                    FL.setPower(-.25);
+                    BR.setPower(0.25);
+                    BL.setPower(-.25);
                 }
                 //super.runOpMode(Angle2, false);
             }
 
             //set rev3
             if(step == 20){
+                sleep(100);
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() - 2000;
+                NumberOfRevs3 = FL.getCurrentPosition() - 3000;
                 step=step+1;
             }
 
             //move forward
             if(step == 21){
-                if(!hasStarted) {
-                    NumberOfRevs3 = FL.getCurrentPosition() - 2000;
-                    hasStarted = true;
-                }
                 if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
+                    BL.setPower(-.75);
+                    BR.setPower(-.75);
+                    FR.setPower(-.75);
+                    FL.setPower(-.75);
                 }
                 else{
                     BL.setPower(0);
@@ -624,15 +770,17 @@ public class AutonV2 extends LinearOpMode {
             }
             else{
                 buttonPusher.setPosition(.4);
-                sleep(1000);
+                sleep(1200);
                 buttonPusher.setPosition(.6);
-                sleep(1000);
+                sleep(1200);
                 buttonInit = false;
+                push = false;
                 pushed = true;
             }
         }
     }
     //detect color
+    /*
     boolean isRed () {
         if(colorSensor.red() > 1 && colorSensor.red() > colorSensor.blue()){
             colorCheckStep++;
@@ -664,6 +812,7 @@ public class AutonV2 extends LinearOpMode {
             return false;
         }
     }
+    */
     //move backwards
     void moveBack (double clicks) {
         double runTo = FL.getCurrentPosition() + clicks;
@@ -684,18 +833,38 @@ public class AutonV2 extends LinearOpMode {
     }
     //stop at line
     void stopAtLine (int dir) {
-        if(bottomOD.getRawLightDetected() < .05){
-            FL.setPower(.25 * dir);
-            BL.setPower(.25 * dir);
-            FR.setPower(.25 * dir);
-            BR.setPower(.25 * dir);
+        if(bottomOD.getRawLightDetected() < .08){
+            FL.setPower(.35 * dir);
+            BL.setPower(.35 * dir);
+            FR.setPower(.35 * dir);
+            BR.setPower(.35 * dir);
         }
         else{
-            FL.setPower(0);
-            BL.setPower(0);
-            FR.setPower(0);
-            BR.setPower(0);
-            turnCompleted = true;
+            if(!turnCompleted) {
+                FL.setPower(0);
+                BL.setPower(0);
+                FR.setPower(0);
+                BR.setPower(0);
+                turnCompleted = true;
+            }
+            return;
+        }
+    }
+    void stopAtLine2 (int dir) {
+        if(bottomOD.getRawLightDetected() < .08){
+            FL.setPower(.35 * dir);
+            BL.setPower(.35 * dir);
+            FR.setPower(.35 * dir);
+            BR.setPower(.35 * dir);
+        }
+        else{
+            if(!turnCompleted) {
+                FL.setPower(0);
+                BL.setPower(0);
+                FR.setPower(0);
+                BR.setPower(0);
+                turnCompleted = true;
+            }
             return;
         }
     }
@@ -714,17 +883,20 @@ public class AutonV2 extends LinearOpMode {
         return;
     }
     void strafeRight (int time) {
-        FR.setPower(.5);
-        BR.setPower(-.5);
-        FL.setPower(-.5);
-        BL.setPower(.5);
-        sleep(time);
-        FR.setPower(0);
-        BR.setPower(0);
-        FL.setPower(0);
-        BL.setPower(0);
-        turnCompleted = true;
-        return;
+        if(colorOD.getRawLightDetected() < .07) {
+            FR.setPower(.25);
+            BR.setPower(-.25);
+            FL.setPower(-.25);
+            BL.setPower(.25);
+        }
+        else {
+            FR.setPower(0);
+            BR.setPower(0);
+            FL.setPower(0);
+            BL.setPower(0);
+            turnCompleted = true;
+            return;
+        }
     }
     //shoot
     void shoot (){
@@ -817,97 +989,5 @@ public class AutonV2 extends LinearOpMode {
             BL.setPower(-.25);
         }
     }
-*/
-/*
-    //IMU
-    void composeTelemetry() {
-
-        // At the beginning of each telemetry update, grab a bunch of data
-        // from the IMU that we will then display in separate lines.
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            // Acquiring the angles is relatively expensive; we don't want
-            // to do that in each of the three items that need that info, as that's
-            // three times the necessary expense.
-            angles   = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-            gravity  = imu.getGravity();
-        }
-        });
-
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("x", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("grvty", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Formatting
-    //----------------------------------------------------------------------------------------------
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-}
-
-
-class moveRobot extends AutonV2 {
-    public void forward (double clicks){
-        clicks = FL.getCurrentPosition() - clicks;
-        if(FL.getCurrentPosition() > clicks) {
-            BL.setPower(-.5);
-            BR.setPower(-.5);
-            FR.setPower(-.5);
-            FL.setPower(-.5);
-        }
-        else{
-            BL.setPower(0);
-            BR.setPower(0);
-            FR.setPower(0);
-            FL.setPower(0);
-            return;
-        }
-    }*/
+    */
 }
