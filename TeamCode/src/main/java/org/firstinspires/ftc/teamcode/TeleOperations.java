@@ -190,7 +190,7 @@ public class TeleOperations extends LinearOpMode {
                 if(!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2520)) {
+                    } else if (LauncherM.getCurrentPosition() <= 650 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
                     }
                     else{
@@ -204,10 +204,10 @@ public class TeleOperations extends LinearOpMode {
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 1150 + (EncoderClicks - 2520)) {
+                    if (LauncherM.getCurrentPosition() > 650 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(.08);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1150 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
+                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
                         Reloader.setPosition(0.1);
                     } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
