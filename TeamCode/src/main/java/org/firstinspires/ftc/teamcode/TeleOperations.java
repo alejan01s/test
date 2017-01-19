@@ -14,6 +14,11 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name="Main TeleOp", group="Linear Opmode")
 public class TeleOperations extends LinearOpMode {
 
+    public boolean downenabled;
+    public boolean upenabled;
+    public boolean upstopped;
+    public boolean downstopped;
+
     //DRIVE-TRAIN MOTORS
     public DcMotor FR;
     public DcMotor FL;
@@ -141,6 +146,9 @@ public class TeleOperations extends LinearOpMode {
         boolean MoveLiftUpPos3 = false;
         boolean MoveLiftUpPos3L = false;
         boolean MoveLiftUpPos3R = false;
+        boolean MoveLiftDownPos3 = false;
+        boolean MoveLiftDownPos3L = false;
+        boolean MoveLiftDownPos3R = false;
         boolean manualOverrideLiftUp;
         boolean manualOverrideLiftDown;
         boolean lRanUp = false;
@@ -190,24 +198,24 @@ public class TeleOperations extends LinearOpMode {
                 if(!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 650 + (EncoderClicks - 2520)) {
+                    } else if (LauncherM.getCurrentPosition() <= 550 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
                     }
                     else{
                         pause = true;
                     }
                     if (pause) {
-                        LauncherM.setPower(0.08);
+                        LauncherM.setPower(0.15);
                         Reloader.setPosition(.65);
                         resume = true;
                         pause = false;
                     }
                 }
                 if(resume) {
-                    if (LauncherM.getCurrentPosition() > 650 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 1250 + (EncoderClicks - 2520)) {
-                        LauncherM.setPower(.08);
+                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 1200 + (EncoderClicks - 2520)) {
+                        LauncherM.setPower(.15);
                     }
-                    else if (LauncherM.getCurrentPosition() > 1250 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
+                    else if (LauncherM.getCurrentPosition() > 1200 + (EncoderClicks-2520) && LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
                         LauncherM.setPower(1);
                         Reloader.setPosition(0.1);
                     } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
@@ -328,6 +336,125 @@ public class TeleOperations extends LinearOpMode {
 
             telemetry.addData("BallGStowed: ", BallGStowed);
 
+            if(upenabled == true)
+            {
+
+                if(LiftR.getCurrentPosition() < 8175)
+                {
+
+                    if(gamepad2.dpad_up == true)
+                    {
+
+                        LiftR.setPower(1);
+                        LiftL.setPower(-1);
+
+                    }
+
+                }
+
+                if(LiftR.getCurrentPosition() >= 8175)
+                {
+
+                    upenabled = false;
+
+                }
+
+            }
+
+            if(downenabled == true)
+            {
+
+                if(LiftR.getCurrentPosition() > 1000)
+                {
+
+                    if(gamepad2.dpad_down == true)
+                    {
+
+                        LiftR.setPower(-0.75);
+                        LiftL.setPower(0.75);
+
+                    }
+
+                }
+
+                if(LiftR.getCurrentPosition() > 0 && LiftR.getCurrentPosition() <= 1000)
+                {
+
+                    if(gamepad2.dpad_down == true)
+                    {
+
+                        LiftR.setPower(-0.3);
+                        LiftL.setPower(0.3);
+
+                    }
+
+                }
+
+                if(LiftR.getCurrentPosition() <= 0)
+                {
+
+                    downenabled = false;
+
+                }
+
+            }
+
+            if(upenabled == false)
+            {
+
+                if(upstopped == false)
+
+                {
+
+                    LiftR.setPower(0);
+                    LiftL.setPower(0);
+
+                    upstopped = true;
+
+                }
+
+            }
+
+            if(downenabled == false)
+            {
+
+                if(downstopped == false)
+                {
+
+                    LiftR.setPower(0);
+                    LiftL.setPower(0);
+
+                    downstopped = true;
+
+                }
+
+            }
+
+            if(LiftR.getCurrentPosition() < 8175)
+            {
+
+                upenabled = true;
+                upstopped = false;
+
+            }
+
+            if(LiftR.getCurrentPosition() > 0)
+            {
+
+                downenabled = true;
+                downstopped = false;
+
+            }
+
+            if(gamepad2.dpad_down == false && gamepad2.dpad_up == false)
+            {
+
+                LiftR.setPower(0);
+                LiftL.setPower(0);
+
+            }
+            
+            /*
             manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
             manualOverrideLiftDown = gamepad2.dpad_down ? true : false;
             if(!cancelOverride) {
@@ -386,6 +513,86 @@ public class TeleOperations extends LinearOpMode {
                     }
                 }
             }
+            boolean CurrentState = gamepad1.y;
+
+            if (CurrentState == true && SwitchState != CurrentState && MoveLiftDownPos3 == false) {
+                SwitchState = CurrentState;
+                MoveLiftUpPos3 = true;
+                MoveLiftUpPos3L = true;
+                MoveLiftUpPos3R = true;
+                tensionLift = true;
+
+                Thread.sleep(5);
+            } else if (CurrentState == true && SwitchState == CurrentState && MoveLiftUpPos3 == false) {
+                SwitchState = false;
+                MoveLiftDownPos3 = true;
+                MoveLiftDownPos3L = true;
+                MoveLiftDownPos3R = true;
+                tensionLift = true;
+
+                Thread.sleep(5);
+            }
+            if(MoveLiftUpPos3){
+                if(tensionLift){
+                    LiftL.setPower(-.03);
+                    LiftR.setPower(.03);
+                    Thread.sleep(2500);
+                    LiftL.setPower(0);
+                    LiftR.setPower(0);
+                    Thread.sleep(1500);
+                    tensionLift = false;
+                }
+                if(!tensionLift){
+                    if (LiftL.getCurrentPosition() > -400) {
+                        LiftL.setPower(-1);
+                    } else {
+                        LiftL.setPower(0);
+                        MoveLiftUpPos3L = false;
+                    }
+                    if (LiftR.getCurrentPosition() < 400) {
+                        LiftR.setPower(1);
+                    } else {
+                        LiftR.setPower(0);
+                        MoveLiftUpPos3R = false;
+                    }
+                    if(!MoveLiftUpPos3L && !MoveLiftUpPos3R){
+                        cancelOverride = false;
+                        MoveLiftUpPos3 =false;
+                    }
+                }
+            }
+            if(MoveLiftDownPos3){
+                if(tensionLift){
+                    /*
+                    LiftL.setPower(-.03);
+                    LiftR.setPower(.03);
+                    Thread.sleep(2500);
+                    LiftL.setPower(0);
+                    LiftR.setPower(0);
+                    Thread.sleep(1500);
+
+                    tensionLift = false;
+                }
+                if(!tensionLift){
+                    if (LiftL.getCurrentPosition() < 0) {
+                        LiftL.setPower(1);
+                    } else {
+                        LiftL.setPower(0);
+                        MoveLiftDownPos3L = false;
+                    }
+                    if (LiftR.getCurrentPosition() > 0) {
+                        LiftR.setPower(-1);
+                    } else {
+                        LiftR.setPower(0);
+                        MoveLiftDownPos3R = false;
+                    }
+                    if(!MoveLiftDownPos3L && !MoveLiftDownPos3R){
+                        cancelOverride = false;
+                        MoveLiftDownPos3 = false;
+                    }
+                }
+            }
+            */
             //BALL GRABBERS MUST NOT BE STOWED TO RUN LIFT AS A SAFETY MEASURE
             if(!BallGStowed) {
 
@@ -530,35 +737,6 @@ public class TeleOperations extends LinearOpMode {
                     if(!MoveLiftUpPos2L && !MoveLiftUpPos2R){
                         cancelOverride = false;
                         MoveLiftUpPos2 =false;
-                    }
-                }
-            }
-            else if(MoveLiftUpPos3){
-                if(tensionLift){
-                    LiftL.setPower(-.03);
-                    LiftR.setPower(.03);
-                    Thread.sleep(2500);
-                    LiftL.setPower(0);
-                    LiftR.setPower(0);
-                    Thread.sleep(1500);
-                    tensionLift = false;
-                }
-                if(!tensionLift){
-                    if (LiftL.getCurrentPosition() > -500) {
-                        LiftL.setPower(-1);
-                    } else {
-                        LiftL.setPower(0);
-                        MoveLiftUpPos3L = false;
-                    }
-                    if (LiftR.getCurrentPosition() < 500) {
-                        LiftR.setPower(1);
-                    } else {
-                        LiftR.setPower(0);
-                        MoveLiftUpPos3R = false;
-                    }
-                    if(!MoveLiftUpPos3L && !MoveLiftUpPos3R){
-                        cancelOverride = false;
-                        MoveLiftUpPos3 =false;
                     }
                 }
             }

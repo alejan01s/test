@@ -150,7 +150,7 @@ public class AutonV2 extends LinearOpMode {
 
         //REVOLUTION VARIABLES
         int NumberOfRevs1 = -200;
-        int NumberOfRevs2 = -1700;
+        int NumberOfRevs2 = -1850;
 
         //ANGLE VARIABLES
         double Angle1 = 180;
