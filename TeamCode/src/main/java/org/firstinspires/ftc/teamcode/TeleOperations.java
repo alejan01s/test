@@ -453,7 +453,7 @@ public class TeleOperations extends LinearOpMode {
                 LiftL.setPower(0);
 
             }
-            
+
             /*
             manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
             manualOverrideLiftDown = gamepad2.dpad_down ? true : false;

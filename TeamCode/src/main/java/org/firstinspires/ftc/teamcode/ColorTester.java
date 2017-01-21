@@ -47,7 +47,7 @@ public class ColorTester extends LinearOpMode {
 
             telemetry.addData("bottomOD: ", bottomOD.getRawLightDetected());
             telemetry.addData("frontOD: ", frontOD.getRawLightDetected());
-            telemetry.addData("backOD: ", backOD.getRawLightDetected());
+            telemetry.addData("colorOD: ", backOD.getRawLightDetected());
 
             telemetry.addData("isRed: ", isRed);
             telemetry.addData("isBlue: ", isBlue);

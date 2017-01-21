@@ -177,6 +177,7 @@ public class AutonV3 extends LinearOpMode {
             telemetry.addData("BL: ", BL.getCurrentPosition());
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
+            telemetry.addData("colorOD: ", colorOD.getRawLightDetected());
             telemetry.update();
 
             double[] angles = imu.getAngles();
@@ -223,18 +224,19 @@ public class AutonV3 extends LinearOpMode {
 
             //Move forward
             if(step == 3){
-                if(FL.getCurrentPosition() > NumberOfRevs2) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
-                }
-                else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step=step+1;
+                if(!shoot) {
+                    if (FL.getCurrentPosition() > NumberOfRevs2) {
+                        BL.setPower(-.5);
+                        BR.setPower(-.5);
+                        FR.setPower(-.5);
+                        FL.setPower(-.5);
+                    } else {
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        step = step + 1;
+                    }
                 }
             }
 
@@ -244,7 +246,7 @@ public class AutonV3 extends LinearOpMode {
                 BR.setPower(-.5);
                 FL.setPower(-.5);
                 BL.setPower(.5);
-                Thread.sleep(1450);
+                Thread.sleep(2200);
                 FR.setPower(0);
                 BR.setPower(0);
                 FL.setPower(0);
@@ -271,7 +273,7 @@ public class AutonV3 extends LinearOpMode {
 
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .012) {
+                if(colorOD.getRawLightDetected() < .14) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -351,7 +353,13 @@ public class AutonV3 extends LinearOpMode {
                         sleep(200);
                         isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
                         isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
-                        if(isBlue) {
+                        if (!pushed) {
+                            push = true;
+                        }
+                        if (pushed) {
+                            step = step + 1;
+                        }
+                        /*if(isBlue) {
                             if (!pushed) {
                                 push = true;
                             }
@@ -378,7 +386,7 @@ public class AutonV3 extends LinearOpMode {
                                     step = step + 1;
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -426,7 +434,7 @@ public class AutonV3 extends LinearOpMode {
                 }
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .012) {
+                if(colorOD.getRawLightDetected() < .14) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -508,7 +516,13 @@ public class AutonV3 extends LinearOpMode {
                         sleep(200);
                         isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
                         isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
-                        if(isBlue) {
+                        if (!pushed) {
+                            push = true;
+                        }
+                        if (pushed) {
+                            step = step + 1;
+                        }
+                        /*if(isBlue) {
                             if (!pushed) {
                                 push = true;
                             }
@@ -535,7 +549,7 @@ public class AutonV3 extends LinearOpMode {
                                     step = step + 1;
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -623,31 +637,29 @@ public class AutonV3 extends LinearOpMode {
              */
 
             if(shoot) {
-                if(!resume) {
+                if (!resume) {
                     if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
+                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
-                    }
-                    else{
+                    } else {
                         pause = true;
                     }
                     if (pause) {
                         //INPUT RELOAD FUNCTION WHEN READY HERE
                         LauncherM.setPower(0.1);
-                        Reloader.setPosition(.8);
+                        Reloader.setPosition(.65);
                         resume = true;
                         pause = false;
                     }
                 }
-                if(resume) {
-                    if (LauncherM.getCurrentPosition() > 550 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1300 + (EncoderClicks - 2510)) {
+                if (resume) {
+                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 1150 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(.1);
-                    }
-                    else if (LauncherM.getCurrentPosition() > 1300 + (EncoderClicks-2510) && LauncherM.getCurrentPosition() <= 1800 + (EncoderClicks - 2510)) {
+                    } else if (LauncherM.getCurrentPosition() > 1150 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2510)) {
                         LauncherM.setPower(1);
                         Reloader.setPosition(0.1);
-                    } else if (LauncherM.getCurrentPosition() > 1800 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    } else if (LauncherM.getCurrentPosition() > 2255 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                         LauncherM.setPower(.08);
                     } else {
                         LauncherM.setPower(0);
@@ -657,7 +669,6 @@ public class AutonV3 extends LinearOpMode {
                         shoot = false;
                     }
                 }
-
                 idle();
             }
         }

@@ -293,11 +293,33 @@ public class AutonV2 extends LinearOpMode {
                     hasStarted = true;
                 }
                 if(turnCompleted){
-                    step = step + .5;
+                    step = step + .15;
                     turnCompleted = false;
                     hasStarted = false;
                 }
             }
+
+            if(step == 4.15){
+                turnCompleted = false;
+                NumberOfRevs3 = FL.getCurrentPosition() + 1500;
+                step = step + .1;
+            }
+
+            if(step == 4.25){
+                if (FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.5);
+                    BR.setPower(-.5);
+                    FR.setPower(-.5);
+                    FL.setPower(.5);
+                } else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + .25;
+                }
+            }
+
             if(step == 4.5){
                 if (x > 181.5 && x < 182.5) {
                     //has reached angle therefore end loop
@@ -344,7 +366,7 @@ public class AutonV2 extends LinearOpMode {
             }
             //Move to line
             if(step == 7){
-                if(colorOD.getRawLightDetected() < .012) {
+                if(colorOD.getRawLightDetected() < .1) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -566,7 +588,7 @@ public class AutonV2 extends LinearOpMode {
             }
             if(step == 14.75){
                 sleep(100);
-                if(colorOD.getRawLightDetected() < .009) {
+                if(colorOD.getRawLightDetected() < .1) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
