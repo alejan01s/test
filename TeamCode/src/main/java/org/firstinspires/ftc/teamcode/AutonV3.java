@@ -82,6 +82,8 @@ public class AutonV3 extends LinearOpMode {
     public boolean pushed = false;
     public boolean OppPushSequence = false;
     public boolean nearPush = false;
+    public boolean shoot1;
+    public boolean fired;
 
     public void initializeRobot () {
 
@@ -212,8 +214,12 @@ public class AutonV3 extends LinearOpMode {
 
             //LAUNCH BALLS
             if(step == 1){
-                shoot = true;
-                step=step+1;
+                if(!fired) {
+                    shoot1 = true;
+                }
+                if(fired) {
+                    step = step + 1;
+                }
             }
             if(step == 2){
                 if(!shoot) {
@@ -239,14 +245,27 @@ public class AutonV3 extends LinearOpMode {
                     }
                 }
             }
-
+            if(shoot1){
+                if (LauncherM.getCurrentPosition() <= 2000) {
+                    LauncherM.setPower(1);
+                }
+                else if (LauncherM.getCurrentPosition() <= 2450) {
+                    LauncherM.setPower(.08);
+                }
+                else{
+                    LauncherM.setPower(0);
+                    fired = true;
+                    shoot1 = false;
+                    EncoderClicks = EncoderClicks + 2510;
+                }
+            }
             //Strafe for time
             if(step == 4){
-                FR.setPower(.5);
-                BR.setPower(-.5);
-                FL.setPower(-.5);
-                BL.setPower(.5);
-                Thread.sleep(2200);
+                FR.setPower(.75);
+                BR.setPower(-.75);
+                FL.setPower(-.75);
+                BL.setPower(.75);
+                Thread.sleep(1600);
                 FR.setPower(0);
                 BR.setPower(0);
                 FL.setPower(0);
@@ -257,23 +276,46 @@ public class AutonV3 extends LinearOpMode {
             //move to line
             if(step == 5){
                 if(bottomOD.getRawLightDetected() < .08){
-                    FL.setPower(-.25);
-                    BL.setPower(-.25);
-                    FR.setPower(-.25);
-                    BR.setPower(-.25);
+                    FL.setPower(-.4);
+                    BL.setPower(-.4);
+                    FR.setPower(-.4);
+                    BR.setPower(-.4);
                 }
                 else{
                     FL.setPower(0);
                     BL.setPower(0);
                     FR.setPower(0);
                     BR.setPower(0);
-                    step=step+1;
+                    step=step+.5;
                 }
             }
-
+            if(step == 5.5){/*
+                if (x > .5 && x < 1.5) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                    step=step+.5;
+                } else if (x < .5) {
+                    //turn clockwise
+                    FR.setPower(-.5);
+                    FL.setPower(.5);
+                    BR.setPower(-.5);
+                    BL.setPower(.5);
+                } else if (x > 1.5) {
+                    //turn counter-clockwise
+                    FR.setPower(0.5);
+                    FL.setPower(-.5);
+                    BR.setPower(0.5);
+                    BL.setPower(-.5);
+                }*/
+                step = step +.5;
+            }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .14) {
+                if(colorOD.getRawLightDetected() < .035) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -292,16 +334,16 @@ public class AutonV3 extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() + 450;
+                NumberOfRevs3 = FL.getCurrentPosition() - 75;
                 step=step+.25;
             }
             //Position
             if(step == 6.75){
-                if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.25);
-                    BR.setPower(.25);
-                    FR.setPower(.25);
-                    FL.setPower(.25);
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else {
                     BL.setPower(0);
@@ -314,14 +356,14 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 290;
+                NumberOfRevs3 = FL.getCurrentPosition() - 275;
                 step=step+1;
             }
 
             //Detect color
             if(step == 8){
                 isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-                isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                isBlue = colorSensor.blue() >= 2 && colorSensor.blue() > colorSensor.red() ? true : false;
                 if(isBlue && !OppPushSequence){
                     //push button
                     nearPush = true;
@@ -350,9 +392,7 @@ public class AutonV3 extends LinearOpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
-                        sleep(200);
-                        isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-                        isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                        sleep(5);
                         if (!pushed) {
                             push = true;
                         }
@@ -403,10 +443,10 @@ public class AutonV3 extends LinearOpMode {
             //move forward
             if(step == 10){
                 if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
+                    BL.setPower(-.4);
+                    BR.setPower(-.4);
+                    FR.setPower(-.4);
+                    FL.setPower(-.4);
                 }
                 else {
                     BL.setPower(0);
@@ -420,21 +460,45 @@ public class AutonV3 extends LinearOpMode {
             //MOVE to line
             if(step == 11){
                 if(bottomOD.getRawLightDetected() < .08){
-                    FL.setPower(-.25);
-                    BL.setPower(-.25);
-                    FR.setPower(-.25);
-                    BR.setPower(-.25);
+                    FL.setPower(-.4);
+                    BL.setPower(-.4);
+                    FR.setPower(-.4);
+                    BR.setPower(-.4);
                 }
                 else{
                     FL.setPower(0);
                     BL.setPower(0);
                     FR.setPower(0);
                     BR.setPower(0);
-                    step=step+.5;
+                    step=step+.25;
                 }
             }
+            if(step == 11.25){
+                /*if (x > .5 && x < 1.5) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                    step=step+.25;
+                } else if (x < .5) {
+                    //turn clockwise
+                    FR.setPower(-.5);
+                    FL.setPower(.5);
+                    BR.setPower(-.5);
+                    BL.setPower(.5);
+                } else if (x > 1.5) {
+                    //turn counter-clockwise
+                    FR.setPower(0.5);
+                    FL.setPower(-.5);
+                    BR.setPower(0.5);
+                    BL.setPower(-.5);
+                }*/
+                step = step + .25;
+            }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .14) {
+                if(colorOD.getRawLightDetected() < .032) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -454,17 +518,17 @@ public class AutonV3 extends LinearOpMode {
             }
             //set revs3
             if(step == 12){
-                NumberOfRevs3 = FL.getCurrentPosition() + 450;
+                NumberOfRevs3 = FL.getCurrentPosition() - 75;
                 step=step+1;
             }
 
             //position
             if(step == 13){
-                if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.25);
-                    BR.setPower(.25);
-                    FR.setPower(.25);
-                    FL.setPower(.25);
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else {
                     BL.setPower(0);
@@ -477,14 +541,14 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 290;
+                NumberOfRevs3 = FL.getCurrentPosition() - 250;
                 step=step+1;
             }
 
             //Detect color
             if(step == 15){
                 isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-                isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                isBlue = colorSensor.blue() >= 2 && colorSensor.blue() > colorSensor.red() ? true : false;
                 if(isBlue && !OppPushSequence){
                     //push button
                     nearPush = true;
@@ -498,7 +562,7 @@ public class AutonV3 extends LinearOpMode {
                         push = true;
                     }
                     else {
-                        step = step + 1;
+                        step = step + .5;
                     }
                 }
                 else if(OppPushSequence){
@@ -513,14 +577,12 @@ public class AutonV3 extends LinearOpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
-                        sleep(200);
-                        isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-                        isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
+                        sleep(5);
                         if (!pushed) {
                             push = true;
                         }
                         if (pushed) {
-                            step = step + 1;
+                            step = step + .5;
                         }
                         /*if(isBlue) {
                             if (!pushed) {
@@ -553,51 +615,77 @@ public class AutonV3 extends LinearOpMode {
                     }
                 }
             }
-
+            if(step == 15.5){
+                FR.setPower(-.2);
+                BR.setPower(.2);
+                FL.setPower(.2);
+                BL.setPower(-.2);
+                Thread.sleep(200);
+                FR.setPower(0);
+                BR.setPower(0);
+                FL.setPower(0);
+                BL.setPower(0);
+                step=step+.25;
+            }
+            if(step == 15.75){
+                NumberOfRevs3 = FL.getCurrentPosition() - 540;
+                step = step + .25;
+            }
             //TURN
             if(step == 16){
+                /*
                 pushed = false;
                 nearPush = false;
                 OppPushSequence = false;
-                if (x > 72 && x < 78) {
+                if (x > 129 && x < 131) {
                     //has reached angle therefore end loop
                     FR.setPower(0);
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
                     turnCompleted = true;
-                    step = step + .25;
-                } else if (x < 72) {
+                    step=step+1;
+                } else if (x < 129) {
                     //turn clockwise
-                    FR.setPower(.25);
-                    FL.setPower(-.25);
-                    BR.setPower(.25);
-                    BL.setPower(-.25);
-                } else if (x > 78) {
+                    FR.setPower(-.5);
+                    FL.setPower(.5);
+                    BR.setPower(-.5);
+                    BL.setPower(.5);
+                } else if (x > 131) {
                     //turn counter-clockwise
-                    FR.setPower(-0.25);
-                    FL.setPower(.25);
-                    BR.setPower(-0.25);
-                    BL.setPower(.25);
+                    FR.setPower(0.5);
+                    FL.setPower(-.5);
+                    BR.setPower(0.5);
+                    BL.setPower(-.5);
+                }*/
+                if (FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.5);
+                    BR.setPower(.5);
+                    FR.setPower(.5);
+                    FL.setPower(-.5);
+                } else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 1;
                 }
-                // TURN TO ANGLE MoveToAngle(Angle2);
-                step=step+1;
             }
 
             //set rev3
             if(step == 17){
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() - 2000;
+                NumberOfRevs3 = FL.getCurrentPosition() + 3500;
                 step=step+1;
             }
 
             //move forward
             if(step == 18){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(-.5);
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(1);
+                    BR.setPower(1);
+                    FR.setPower(1);
+                    FL.setPower(1);
                 }
                 else{
                     BL.setPower(0);
