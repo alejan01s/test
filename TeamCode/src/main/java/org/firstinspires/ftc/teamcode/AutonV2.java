@@ -413,7 +413,7 @@ public class AutonV2 extends LinearOpMode {
             }
             //Move to line
             if(step == 7){
-                if(colorOD.getRawLightDetected() < .015) {
+                if(colorOD.getRawLightDetected() < .012) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);
@@ -635,7 +635,7 @@ public class AutonV2 extends LinearOpMode {
             }
             if(step == 14.75){
                 sleep(100);
-                if(colorOD.getRawLightDetected() < .015) {
+                if(colorOD.getRawLightDetected() < .013) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);

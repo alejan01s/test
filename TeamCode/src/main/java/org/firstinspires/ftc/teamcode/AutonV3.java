@@ -334,7 +334,7 @@ public class AutonV3 extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 75;
+                NumberOfRevs3 = FL.getCurrentPosition() - 50;
                 step=step+.25;
             }
             //Position
@@ -356,7 +356,7 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 275;
+                NumberOfRevs3 = FL.getCurrentPosition() - 300;
                 step=step+1;
             }
 
@@ -518,7 +518,7 @@ public class AutonV3 extends LinearOpMode {
             }
             //set revs3
             if(step == 12){
-                NumberOfRevs3 = FL.getCurrentPosition() - 75;
+                NumberOfRevs3 = FL.getCurrentPosition() - 25;
                 step=step+1;
             }
 
@@ -541,7 +541,7 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 250;
+                NumberOfRevs3 = FL.getCurrentPosition() - 300;
                 step=step+1;
             }
 
