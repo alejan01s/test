@@ -310,7 +310,7 @@ public class AutonV2 extends LinearOpMode {
             if(step == 4){
                 Thread.sleep(100);
                 if(!hasStarted) {
-                    strafeLeft(1400);
+                    strafeLeft(1550);
                     hasStarted = true;
                 }
                 if(turnCompleted){
