@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
-@Autonomous (name = "PrimaryAutonomousBLUE", group = "Sensor")
-public class AutonV3 extends LinearOpMode {
+@Autonomous (name = "AutonomousRedNOTURN", group = "Sensor")
+public class autonomousRedNoTurn extends LinearOpMode {
 
     //MOTORS
     public DcMotor FR;
@@ -274,10 +274,10 @@ public class AutonV3 extends LinearOpMode {
             }
             //Strafe for time
             if(step == 4){
-                FR.setPower(.75);
-                BR.setPower(-.75);
-                FL.setPower(-.75);
-                BL.setPower(.75);
+                FR.setPower(-.75);
+                BR.setPower(.75);
+                FL.setPower(.75);
+                BL.setPower(-.75);
                 Thread.sleep(1600);
                 FR.setPower(0);
                 BR.setPower(0);
@@ -329,10 +329,10 @@ public class AutonV3 extends LinearOpMode {
             //set revs3
             if(step == 6){
                 if(colorOD.getRawLightDetected() < .0385) {
-                    FR.setPower(.1);
-                    BR.setPower(-.1);
-                    FL.setPower(-.1);
-                    BL.setPower(.1);
+                    FR.setPower(-.1);
+                    BR.setPower(.1);
+                    FL.setPower(.1);
+                    BL.setPower(-.1);
                 }
                 else {
                     FR.setPower(0);
@@ -512,10 +512,10 @@ public class AutonV3 extends LinearOpMode {
             }
             if(step == 11.5){
                 if(colorOD.getRawLightDetected() < .0395) {
-                    FR.setPower(.1);
-                    BR.setPower(-.1);
-                    FL.setPower(-.1);
-                    BL.setPower(.1);
+                    FR.setPower(-.1);
+                    BR.setPower(.1);
+                    FL.setPower(.1);
+                    BL.setPower(-.1);
                 }
                 else {
                     FR.setPower(0);
@@ -629,10 +629,10 @@ public class AutonV3 extends LinearOpMode {
                 }
             }
             if(step == 15.5){
-                FR.setPower(-.2);
-                BR.setPower(.2);
-                FL.setPower(.2);
-                BL.setPower(-.2);
+                FR.setPower(.2);
+                BR.setPower(-.2);
+                FL.setPower(-.2);
+                BL.setPower(.2);
                 Thread.sleep(200);
                 FR.setPower(0);
                 BR.setPower(0);

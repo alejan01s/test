@@ -310,7 +310,7 @@ public class AutonV2 extends LinearOpMode {
             if(step == 4){
                 Thread.sleep(100);
                 if(!hasStarted) {
-                    strafeLeft(1550);
+                    strafeLeft(1400);
                     hasStarted = true;
                 }
                 if(turnCompleted){
@@ -413,7 +413,7 @@ public class AutonV2 extends LinearOpMode {
             }
             //Move to line
             if(step == 7){
-                if(colorOD.getRawLightDetected() < .012) {
+                if(colorOD.getRawLightDetected() < .0385) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);
@@ -635,7 +635,7 @@ public class AutonV2 extends LinearOpMode {
             }
             if(step == 14.75){
                 sleep(100);
-                if(colorOD.getRawLightDetected() < .013) {
+                if(colorOD.getRawLightDetected() < .0395) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);
@@ -660,7 +660,7 @@ public class AutonV2 extends LinearOpMode {
                 OppPushSequence = false;
                 pushed = false;
                 sleep(100);
-                NumberOfRevs3 = FL.getCurrentPosition() - 525;
+                NumberOfRevs3 = FL.getCurrentPosition() - 550;
                 step=step+1;
             }
 
@@ -688,7 +688,7 @@ public class AutonV2 extends LinearOpMode {
                 pushed = false;
                 hasStarted = false;
                 sleep(100);
-                NumberOfRevs3 = FL.getCurrentPosition() + 290;
+                NumberOfRevs3 = FL.getCurrentPosition() + 315;
                 step=step+1;
             }
 
@@ -773,10 +773,10 @@ public class AutonV2 extends LinearOpMode {
                 sleep(100);
                 NumberOfRevs3 = FL.getCurrentPosition() + 500;
                 //add strafe
-                step = step + .5;
+                step = step + .55;
             }
             //TURN
-            if(step == 19){
+            if(step == 2000){
                 if (x > 223 && x < 227) {
                     //has reached angle therefore end loop
                     FR.setPower(0);

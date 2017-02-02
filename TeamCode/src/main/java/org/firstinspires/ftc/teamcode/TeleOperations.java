@@ -335,125 +335,69 @@ public class TeleOperations extends LinearOpMode {
             boolean BallGStowed = BallG1.getPosition() > 0.015 && BallG2.getPosition() < .985 ? false : true;
 
             telemetry.addData("BallGStowed: ", BallGStowed);
+            if(!BallGStowed) {
+                if (upenabled == true) {
+                    if (LiftR.getCurrentPosition() < 8175) {
+                        if (gamepad2.dpad_up == true) {
+                            LiftR.setPower(1);
+                            LiftL.setPower(-1);
+                        }
+                    }
+                    if (LiftR.getCurrentPosition() >= 8175) {
+                        upenabled = false;
+                    }
+                }
 
-            if(upenabled == true)
-            {
-
-                if(LiftR.getCurrentPosition() < 8175)
-                {
-
-                    if(gamepad2.dpad_up == true)
-                    {
-
-                        LiftR.setPower(1);
-                        LiftL.setPower(-1);
-
+                if (downenabled == true) {
+                    if (LiftR.getCurrentPosition() > 1000) {
+                        if (gamepad2.dpad_down == true) {
+                            LiftR.setPower(-0.75);
+                            LiftL.setPower(0.75);
+                        }
                     }
 
-                }
-
-                if(LiftR.getCurrentPosition() >= 8175)
-                {
-
-                    upenabled = false;
-
-                }
-
-            }
-
-            if(downenabled == true)
-            {
-
-                if(LiftR.getCurrentPosition() > 1000)
-                {
-
-                    if(gamepad2.dpad_down == true)
-                    {
-
-                        LiftR.setPower(-0.75);
-                        LiftL.setPower(0.75);
-
+                    if (LiftR.getCurrentPosition() > 0 && LiftR.getCurrentPosition() <= 1000) {
+                        if (gamepad2.dpad_down == true) {
+                            LiftR.setPower(-0.3);
+                            LiftL.setPower(0.3);
+                        }
                     }
 
-                }
-
-                if(LiftR.getCurrentPosition() > 0 && LiftR.getCurrentPosition() <= 1000)
-                {
-
-                    if(gamepad2.dpad_down == true)
-                    {
-
-                        LiftR.setPower(-0.3);
-                        LiftL.setPower(0.3);
-
+                    if (LiftR.getCurrentPosition() <= 0) {
+                        downenabled = false;
                     }
-
                 }
 
-                if(LiftR.getCurrentPosition() <= 0)
-                {
-
-                    downenabled = false;
-
+                if (upenabled == false) {
+                    if (upstopped == false) {
+                        LiftR.setPower(0);
+                        LiftL.setPower(0);
+                        upstopped = true;
+                    }
+                }
+                if (downenabled == false) {
+                    if (downstopped == false) {
+                        LiftR.setPower(0);
+                        LiftL.setPower(0);
+                        downstopped = true;
+                    }
                 }
 
-            }
+                if (LiftR.getCurrentPosition() < 8175) {
+                    upenabled = true;
+                    upstopped = false;
+                }
 
-            if(upenabled == false)
-            {
+                if (LiftR.getCurrentPosition() > 0) {
+                    downenabled = true;
+                    downstopped = false;
+                }
 
-                if(upstopped == false)
-
-                {
-
+                if (gamepad2.dpad_down == false && gamepad2.dpad_up == false) {
                     LiftR.setPower(0);
                     LiftL.setPower(0);
-
-                    upstopped = true;
-
                 }
-
             }
-
-            if(downenabled == false)
-            {
-
-                if(downstopped == false)
-                {
-
-                    LiftR.setPower(0);
-                    LiftL.setPower(0);
-
-                    downstopped = true;
-
-                }
-
-            }
-
-            if(LiftR.getCurrentPosition() < 8175)
-            {
-
-                upenabled = true;
-                upstopped = false;
-
-            }
-
-            if(LiftR.getCurrentPosition() > 0)
-            {
-
-                downenabled = true;
-                downstopped = false;
-
-            }
-
-            if(gamepad2.dpad_down == false && gamepad2.dpad_up == false)
-            {
-
-                LiftR.setPower(0);
-                LiftL.setPower(0);
-
-            }
-
             /*
             manualOverrideLiftUp = gamepad2.dpad_up ? true : false;
             manualOverrideLiftDown = gamepad2.dpad_down ? true : false;
@@ -843,6 +787,7 @@ public class TeleOperations extends LinearOpMode {
                 buttonHold = 0;
             }
             */
+            idle();
         }
     }
 }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 /**
  * Created by aleja on 12/26/2016.
@@ -21,6 +22,8 @@ public class ColorTester extends LinearOpMode {
     public OpticalDistanceSensor frontOD;
     public OpticalDistanceSensor backOD;
 
+    public UltrasonicSensor distanceToWall;
+
     public boolean isRed;
     public boolean isBlue;
 
@@ -29,6 +32,7 @@ public class ColorTester extends LinearOpMode {
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
         backOD = hardwareMap.opticalDistanceSensor.get("backOD");
+        distanceToWall = hardwareMap.ultrasonicSensor.get("wallDistance");
     }
 
     @Override
@@ -48,6 +52,8 @@ public class ColorTester extends LinearOpMode {
             telemetry.addData("bottomOD: ", bottomOD.getRawLightDetected());
             telemetry.addData("frontOD: ", frontOD.getRawLightDetected());
             telemetry.addData("colorOD: ", backOD.getRawLightDetected());
+
+            telemetry.addData("UltraSonicDistance: ", distanceToWall.getUltrasonicLevel());
 
             telemetry.addData("isRed: ", isRed);
             telemetry.addData("isBlue: ", isBlue);
