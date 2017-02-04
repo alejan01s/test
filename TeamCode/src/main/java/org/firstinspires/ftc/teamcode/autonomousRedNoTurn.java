@@ -113,7 +113,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //SENSORS
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        colorSensor = hardwareMap.colorSensor.get("colorSensorL");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("backOD");
         colorOD = hardwareMap.opticalDistanceSensor.get("frontOD");
@@ -153,8 +153,8 @@ public class autonomousRedNoTurn extends LinearOpMode {
         double step = 0;
 
         //REVOLUTION VARIABLES
-        int NumberOfRevs1 = -300;
-        int NumberOfRevs2 = -450;
+        int NumberOfRevs1 = -250;
+        int NumberOfRevs2 = -410;
 
         //ANGLE VARIABLES
         double Angle1 = 190;
@@ -330,16 +330,16 @@ public class autonomousRedNoTurn extends LinearOpMode {
                     step=step+.25;
                 } else if (x < .5) {
                     //turn clockwise
-                    FR.setPower(-.1);
-                    FL.setPower(.1);
-                    BR.setPower(-.1);
-                    BL.setPower(.1);
+                    FR.setPower(-.05);
+                    FL.setPower(.05);
+                    BR.setPower(-.05);
+                    BL.setPower(.05);
                 } else if (x > 1.5) {
                     //turn counter-clockwise
-                    FR.setPower(0.1);
-                    FL.setPower(-.1);
-                    BR.setPower(0.1);
-                    BL.setPower(-.1);
+                    FR.setPower(0.05);
+                    FL.setPower(-.05);
+                    BR.setPower(0.05);
+                    BL.setPower(-.05);
                 }
             }
             if(step == 5.75){
@@ -363,7 +363,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .048) {
+                if(colorOD.getRawLightDetected() < .035) {
                     FR.setPower(-.1);
                     BR.setPower(.1);
                     FL.setPower(.1);
@@ -382,7 +382,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 115;
+                NumberOfRevs3 = FL.getCurrentPosition() - 170;
                 step=step+.25;
             }
             //Position
@@ -404,7 +404,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 415;
+                NumberOfRevs3 = FL.getCurrentPosition() - 380;
                 step=step+1;
             }
 
@@ -546,7 +546,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .058) {
+                if(colorOD.getRawLightDetected() < .05) {
                     FR.setPower(-.1);
                     BR.setPower(.1);
                     FL.setPower(.1);
@@ -589,7 +589,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 300;
+                NumberOfRevs3 = FL.getCurrentPosition() - 330;
                 step=step+1;
             }
 
@@ -676,7 +676,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 step=step+.25;
             }
             if(step == 15.75){
-                NumberOfRevs3 = FL.getCurrentPosition() + 500;
+                NumberOfRevs3 = FL.getCurrentPosition() + 470;
                 step = step + .25;
             }
             //TURN

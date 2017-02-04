@@ -29,8 +29,8 @@ public class ColorTester extends LinearOpMode {
     public boolean isBlue;
 
     public void initializeRobot(){
-        colorReader = hardwareMap.colorSensor.get("colorSensor");
-        //colorReader2 = hardwareMap.colorSensor.get("colorSensor2");
+        colorReader = hardwareMap.colorSensor.get("colorSensorL");
+        //colorReader2 = hardwareMap.colorSensor.get("colorSensorR");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
         backOD = hardwareMap.opticalDistanceSensor.get("backOD");

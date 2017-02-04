@@ -113,7 +113,7 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //SENSORS
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        colorSensor = hardwareMap.colorSensor.get("colorSensorR");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
         colorOD = hardwareMap.opticalDistanceSensor.get("backOD");
