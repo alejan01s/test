@@ -68,6 +68,7 @@ public class TeleOperations extends LinearOpMode {
     public Servo Reloader;
 
     public Servo buttonPusher;
+    public Servo buttonPusher2;
     public boolean buttonPress;
     public boolean buttonInit;
 
@@ -106,6 +107,7 @@ public class TeleOperations extends LinearOpMode {
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         buttonPusher = hardwareMap.servo.get("buttonPusher");
+        buttonPusher2 = hardwareMap.servo.get("buttonPusher2");
 
         //LiftL.setDirection(DcMotor.Direction.REVERSE);
 
@@ -182,6 +184,8 @@ public class TeleOperations extends LinearOpMode {
             telemetry.addData("Roller Status: ", rollerState);
 
             telemetry.update();
+
+            buttonPusher2.setPosition(.5);
 
             /*
 

@@ -13,10 +13,11 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
  */
 
 
-@TeleOp(name = "ColorSensorTester", group = "Linear Opmode")
+@TeleOp(name = "sensorTester", group = "Linear Opmode")
 public class ColorTester extends LinearOpMode {
 
     public ColorSensor colorReader;
+    //public ColorSensor colorReader2;
 
     public OpticalDistanceSensor bottomOD;
     public OpticalDistanceSensor frontOD;
@@ -29,10 +30,11 @@ public class ColorTester extends LinearOpMode {
 
     public void initializeRobot(){
         colorReader = hardwareMap.colorSensor.get("colorSensor");
+        //colorReader2 = hardwareMap.colorSensor.get("colorSensor2");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
         frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
         backOD = hardwareMap.opticalDistanceSensor.get("backOD");
-        distanceToWall = hardwareMap.ultrasonicSensor.get("wallDistance");
+        //distanceToWall = hardwareMap.ultrasonicSensor.get("wallDistance");
     }
 
     @Override
@@ -48,12 +50,18 @@ public class ColorTester extends LinearOpMode {
             telemetry.addData("Green: ", colorReader.green());
             telemetry.addData("Alpha: ", colorReader.alpha());
             telemetry.addData("RGBA: ", colorReader.argb());
-
+            /*
+            telemetry.addData("Red2: ", colorReader2.red());
+            telemetry.addData("Blue2: ", colorReader2.blue());
+            telemetry.addData("Green2: ", colorReader2.green());
+            telemetry.addData("Alpha2: ", colorReader2.alpha());
+            telemetry.addData("RGBA2: ", colorReader2.argb());
+            */
             telemetry.addData("bottomOD: ", bottomOD.getRawLightDetected());
             telemetry.addData("frontOD: ", frontOD.getRawLightDetected());
             telemetry.addData("colorOD: ", backOD.getRawLightDetected());
 
-            telemetry.addData("UltraSonicDistance: ", distanceToWall.getUltrasonicLevel());
+            //telemetry.addData("UltraSonicDistance: ", distanceToWall.getUltrasonicLevel());
 
             telemetry.addData("isRed: ", isRed);
             telemetry.addData("isBlue: ", isBlue);

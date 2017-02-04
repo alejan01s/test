@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
-@Autonomous (name = "primaryAutonomousRED", group = "Sensor")
-public class autonomousRedNoTurn extends LinearOpMode {
+@Autonomous (name = "autonomousRampParkBLUE", group = "Sensor")
+public class autonomousRampParkBLUE extends LinearOpMode {
 
     //MOTORS
     public DcMotor FR;
@@ -47,6 +47,8 @@ public class autonomousRedNoTurn extends LinearOpMode {
     public boolean resume = false;
     public DcMotor LauncherM;
     public Servo Reloader;
+
+    public Servo buttonPusher2;
 
     /*
     //IMU
@@ -71,8 +73,6 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
     //BUTTON PUSHER
     public Servo buttonPusher;
-    public Servo buttonPusher2;
-
     public boolean buttonPress;
     public boolean buttonInit;
     public boolean push;
@@ -115,13 +115,12 @@ public class autonomousRedNoTurn extends LinearOpMode {
         //SENSORS
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         bottomOD = hardwareMap.opticalDistanceSensor.get("bottomOD");
-        frontOD = hardwareMap.opticalDistanceSensor.get("backOD");
-        colorOD = hardwareMap.opticalDistanceSensor.get("frontOD");
+        frontOD = hardwareMap.opticalDistanceSensor.get("frontOD");
+        colorOD = hardwareMap.opticalDistanceSensor.get("backOD");
 
         //BUTTON PUSHER
-
-        buttonPusher = hardwareMap.servo.get("buttonPusher2");
-        buttonPusher2 = hardwareMap.servo.get("buttonPusher");
+        buttonPusher = hardwareMap.servo.get("buttonPusher");
+        buttonPusher2 = hardwareMap.servo.get("buttonPusher2");
 
         BallG1 = hardwareMap.servo.get("BallG2");
         BallG2 = hardwareMap.servo.get("BallG1");
@@ -171,7 +170,6 @@ public class autonomousRedNoTurn extends LinearOpMode {
         while(opModeIsActive()){
 
             bottomOD.enableLed(true);
-            frontOD.enableLed(true);
 
             colorSensor.enableLed(false);
             isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
@@ -185,6 +183,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
             telemetry.addData("colorOD: ", colorOD.getRawLightDetected());
+            telemetry.update();
 
             double[] angles = imu.getAngles();
             double yaw = angles[0];
@@ -196,27 +195,12 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 x = x + 360;
             }
 
-            telemetry.addData(imu.getName(), imu.telemetrize());
-            telemetry.addData("X: ", x);
-            telemetry.update();
-
             //SEQUENCES
             BallG1.setPosition(0);
             BallG2.setPosition(1);
             buttonPusher2.setPosition(.5);
-
             //CODE FOR SIDEWAYS STRAFE
-            if(false){
-                FR.setPower(0);
-                BR.setPower(1);
-                FL.setPower(1);
-                BL.setPower(0);
-                sleep(1500);
-                FR.setPower(0);
-                BR.setPower(0);
-                FL.setPower(0);
-                BL.setPower(0);
-            }
+
             //MOVE FORWARD
             if(step == 0){
                 if(FL.getCurrentPosition() > NumberOfRevs1) {
@@ -251,8 +235,8 @@ public class autonomousRedNoTurn extends LinearOpMode {
             }
 
             //Move forward
-            if(step == 3){
-                if(!shoot) {
+            if(step == 3) {
+                if (!shoot) {
                     if (FL.getCurrentPosition() > NumberOfRevs2) {
                         BL.setPower(-.5);
                         BR.setPower(-.5);
@@ -263,8 +247,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
-                        sleep(250);
-                        step = step + 1;
+                        step = step + .5;
                     }
                 }
             }
@@ -282,20 +265,53 @@ public class autonomousRedNoTurn extends LinearOpMode {
                     EncoderClicks = EncoderClicks + 2510;
                 }
             }
-            //Strafe for time
-            if(step == 4){
-                if(bottomOD.getRawLightDetected() < .08) {
-                    FR.setPower(-1);
-                    BR.setPower(0);
-                    FL.setPower(0);
-                    BL.setPower(-1);
-                }
-                else {
+            if(step == 3.5) {
+                if (bottomOD.getRawLightDetected() < .08) {
+                    FR.setPower(0);
+                    BR.setPower(-1);
+                    FL.setPower(-1);
+                    BL.setPower(0);
+                } else {
                     FR.setPower(0);
                     BR.setPower(0);
                     FL.setPower(0);
                     BL.setPower(0);
-                    step = step + 1;
+                    step = step + .5;
+                }
+            }
+            //Strafe for time
+            if(step == 4){
+                /*
+                FR.setPower(.75);
+                BR.setPower(-.75);
+                FL.setPower(-.75);
+                BL.setPower(.75);
+                Thread.sleep(1600);
+                FR.setPower(0);
+                BR.setPower(0);
+                FL.setPower(0);
+                BL.setPower(0);
+                */
+                if (x > .1 && x < 1.5) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    turnCompleted = true;
+                    step=step+1;
+                } else if (x < .1) {
+                    //turn clockwise
+                    FR.setPower(.1);
+                    FL.setPower(-.1);
+                    BR.setPower(.1);
+                    BL.setPower(-.1);
+                } else if (x > 1.5) {
+                    //turn counter-clockwise
+                    FR.setPower(-0.1);
+                    FL.setPower(.1);
+                    BR.setPower(-0.1);
+                    BL.setPower(.1);
                 }
             }
 
@@ -316,10 +332,9 @@ public class autonomousRedNoTurn extends LinearOpMode {
                     step=step+.5;
                 }
                 */
-                sleep(250);
-                step = step + .5;
+                step=step+.5;
             }
-            if(step == 5.5){
+            if(step == 5.5){/*
                 if (x > .5 && x < 1.5) {
                     //has reached angle therefore end loop
                     FR.setPower(0);
@@ -327,47 +342,29 @@ public class autonomousRedNoTurn extends LinearOpMode {
                     BR.setPower(0);
                     BL.setPower(0);
                     turnCompleted = true;
-                    step=step+.25;
+                    step=step+.5;
                 } else if (x < .5) {
                     //turn clockwise
-                    FR.setPower(-.1);
-                    FL.setPower(.1);
-                    BR.setPower(-.1);
-                    BL.setPower(.1);
+                    FR.setPower(-.5);
+                    FL.setPower(.5);
+                    BR.setPower(-.5);
+                    BL.setPower(.5);
                 } else if (x > 1.5) {
                     //turn counter-clockwise
-                    FR.setPower(0.1);
-                    FL.setPower(-.1);
-                    BR.setPower(0.1);
-                    BL.setPower(-.1);
-                }
-            }
-            if(step == 5.75){
-                turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 75;
-                step = step + .2;
-            }
-            if(step == 5.95) {
-                if (FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.1);
-                    BR.setPower(.1);
-                    FR.setPower(.1);
-                    FL.setPower(.1);
-                } else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step = step + .05;
-                }
+                    FR.setPower(0.5);
+                    FL.setPower(-.5);
+                    BR.setPower(0.5);
+                    BL.setPower(-.5);
+                }*/
+                step = step +.5;
             }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .048) {
-                    FR.setPower(-.1);
-                    BR.setPower(.1);
-                    FL.setPower(.1);
-                    BL.setPower(-.1);
+                if(colorOD.getRawLightDetected() < .06) {
+                    FR.setPower(.1);
+                    BR.setPower(-.1);
+                    FL.setPower(-.1);
+                    BL.setPower(.1);
                 }
                 else {
                     FR.setPower(0);
@@ -382,7 +379,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 115;
+                NumberOfRevs3 = FL.getCurrentPosition() - 50;
                 step=step+.25;
             }
             //Position
@@ -404,19 +401,19 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 415;
+                NumberOfRevs3 = FL.getCurrentPosition() - 300;
                 step=step+1;
             }
 
             //Detect color
             if(step == 8){
                 isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
-                isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
-                if(isRed && !OppPushSequence){
+                isBlue = colorSensor.blue() >= 2 && colorSensor.blue() > colorSensor.red() ? true : false;
+                if(isBlue && !OppPushSequence){
                     //push button
                     nearPush = true;
                 }
-                else if(isBlue && !nearPush){
+                else if(isRed && !nearPush){
                     //move forward confirm and push button
                     OppPushSequence = true;
                 }
@@ -546,11 +543,11 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .058) {
-                    FR.setPower(-.1);
-                    BR.setPower(.1);
-                    FL.setPower(.1);
-                    BL.setPower(-.1);
+                if(colorOD.getRawLightDetected() < .06) {
+                    FR.setPower(.1);
+                    BR.setPower(-.1);
+                    FL.setPower(-.1);
+                    BL.setPower(.1);
                 }
                 else {
                     FR.setPower(0);
@@ -566,7 +563,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             }
             //set revs3
             if(step == 12){
-                NumberOfRevs3 = FL.getCurrentPosition() - 45;
+                NumberOfRevs3 = FL.getCurrentPosition() - 25;
                 step=step+1;
             }
 
@@ -597,11 +594,11 @@ public class autonomousRedNoTurn extends LinearOpMode {
             if(step == 15){
                 isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
                 isBlue = colorSensor.blue() >= 2 && colorSensor.blue() > colorSensor.red() ? true : false;
-                if(isRed && !OppPushSequence){
+                if(isBlue && !OppPushSequence){
                     //push button
                     nearPush = true;
                 }
-                else if(isBlue && !nearPush){
+                else if(isRed && !nearPush){
                     //move forward confirm and push button
                     OppPushSequence = true;
                 }
@@ -664,11 +661,11 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 }
             }
             if(step == 15.5){
-                FR.setPower(.5);
-                BR.setPower(-.5);
-                FL.setPower(-.5);
-                BL.setPower(.5);
-                sleep(500);
+                FR.setPower(-.5);
+                BR.setPower(.5);
+                FL.setPower(.5);
+                BL.setPower(-.5);
+                Thread.sleep(500);
                 FR.setPower(0);
                 BR.setPower(0);
                 FL.setPower(0);
@@ -676,8 +673,8 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 step=step+.25;
             }
             if(step == 15.75){
-                NumberOfRevs3 = FL.getCurrentPosition() + 500;
-                step = step + .25;
+                NumberOfRevs3 = FL.getCurrentPosition() - 500;
+                step = step + 1.25;
             }
             //TURN
             if(step == 16){
@@ -706,11 +703,11 @@ public class autonomousRedNoTurn extends LinearOpMode {
                     BR.setPower(0.5);
                     BL.setPower(-.5);
                 }*/
-                if (FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.5);
-                    BR.setPower(-.5);
-                    FR.setPower(-.5);
-                    FL.setPower(.5);
+                if (FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.5);
+                    BR.setPower(.5);
+                    FR.setPower(.5);
+                    FL.setPower(-.5);
                 } else {
                     BL.setPower(0);
                     BR.setPower(0);
@@ -723,7 +720,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             //set rev3
             if(step == 17){
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 3500;
+                NumberOfRevs3 = FL.getCurrentPosition() + 5000;
                 step=step+1;
             }
 
@@ -757,9 +754,9 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 }
             }
             else{
-                buttonPusher.setPosition(.6);
-                sleep(1500);
                 buttonPusher.setPosition(.4);
+                sleep(1500);
+                buttonPusher.setPosition(.6);
                 sleep(1500);
                 buttonInit = false;
                 push = false;

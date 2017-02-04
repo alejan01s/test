@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
+@Disabled
 @Autonomous (name = "PrimaryAutonomousRED", group = "Sensor")
 public class AutonV2 extends LinearOpMode {
 
@@ -291,6 +293,7 @@ public class AutonV2 extends LinearOpMode {
             //Move forward
             if(step == 3){
                 if(!shoot) {
+
                     if (FL.getCurrentPosition() > NumberOfRevs2) {
                         BL.setPower(-.5);
                         BR.setPower(-.5);
@@ -303,6 +306,18 @@ public class AutonV2 extends LinearOpMode {
                         FL.setPower(0);
                         step = step + 1;
                     }
+                    /*
+                    FR.setPower(0);
+                    BR.setPower(-1);
+                    FL.setPower(-1);
+                    BL.setPower(0);
+                    sleep(1500);
+                    FR.setPower(0);
+                    BR.setPower(0);
+                    FL.setPower(0);
+                    BL.setPower(0);
+                    step = step + 1;
+                    */
                 }
             }
 
@@ -413,7 +428,7 @@ public class AutonV2 extends LinearOpMode {
             }
             //Move to line
             if(step == 7){
-                if(colorOD.getRawLightDetected() < .0385) {
+                if(colorOD.getRawLightDetected() < .055) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);
@@ -635,7 +650,7 @@ public class AutonV2 extends LinearOpMode {
             }
             if(step == 14.75){
                 sleep(100);
-                if(colorOD.getRawLightDetected() < .0395) {
+                if(colorOD.getRawLightDetected() < .055) {
                     FR.setPower(.25);
                     BR.setPower(-.25);
                     FL.setPower(-.25);

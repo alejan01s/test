@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 //Plan: Launch ball into goal, reload, launch second, then knock ball out of center goal and end.
 
-@Autonomous (name = "AutonomousV1", group = "Sensor")
+@Autonomous (name = "autonomousBASIC", group = "Sensor")
 public class AutonomousV1 extends DefinerClass {
 
     public double EncoderClicks = 2510;

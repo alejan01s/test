@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
-@Autonomous (name = "primaryAutonomousRED", group = "Sensor")
-public class autonomousRedNoTurn extends LinearOpMode {
+@Autonomous (name = "autonomousRampParkRED", group = "Sensor")
+public class autonomousRampParkRED extends LinearOpMode {
 
     //MOTORS
     public DcMotor FR;
@@ -677,7 +677,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             }
             if(step == 15.75){
                 NumberOfRevs3 = FL.getCurrentPosition() + 500;
-                step = step + .25;
+                step = step + 1.25;
             }
             //TURN
             if(step == 16){
@@ -723,7 +723,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             //set rev3
             if(step == 17){
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 3500;
+                NumberOfRevs3 = FL.getCurrentPosition() + 5000;
                 step=step+1;
             }
 
