@@ -160,6 +160,11 @@ public class autonomousRedNoTurn extends LinearOpMode {
         double Angle1 = 190;
         double Angle2 = 280;
 
+        //PRACTICE VALUES: .035, .05
+        //USRA: .075, .08
+        double beaconOneDistance = .075;
+        double beaconTwoDistance = .08;
+
         imuTest imu = new imuTest("imu", hardwareMap);
 
         while (!isStarted()) {
@@ -363,7 +368,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
             }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .035) {
+                if(colorOD.getRawLightDetected() < beaconOneDistance) {
                     FR.setPower(-.1);
                     BR.setPower(.1);
                     FL.setPower(.1);
@@ -546,7 +551,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .05) {
+                if(colorOD.getRawLightDetected() < beaconTwoDistance) {
                     FR.setPower(-.1);
                     BR.setPower(.1);
                     FL.setPower(.1);
@@ -589,7 +594,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 330;
+                NumberOfRevs3 = FL.getCurrentPosition() - 360;
                 step=step+1;
             }
 

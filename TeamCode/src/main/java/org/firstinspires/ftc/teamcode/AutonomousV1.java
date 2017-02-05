@@ -30,6 +30,7 @@ public class AutonomousV1 extends DefinerClass {
     public Servo BallG1;
     public Servo BallG2;
     public Servo buttonPusher;
+    public Servo buttonPusher2;
 
     public void initializeRobot () {
         LauncherM = hardwareMap.dcMotor.get("Launcher");
@@ -38,6 +39,7 @@ public class AutonomousV1 extends DefinerClass {
         BallG1 = hardwareMap.servo.get("BallG2");
         BallG2 = hardwareMap.servo.get("BallG1");
         buttonPusher = hardwareMap.servo.get("buttonPusher");
+        buttonPusher2 = hardwareMap.servo.get("buttonPusher2");
 
         LauncherM.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -54,7 +56,7 @@ public class AutonomousV1 extends DefinerClass {
         *                 *
         *******************
          */
-        int step = 0;
+        int step = -1;
         int Angle1 = 270;
         int Angle2 = 90;
         int Angle3 = 180;
@@ -79,13 +81,17 @@ public class AutonomousV1 extends DefinerClass {
             BallG1.setPosition(0);
             BallG2.setPosition(1);
             buttonPusher.setPosition(.5);
-
+            buttonPusher2.setPosition(.5);
             //Step 1: Position Robot
             //if(step == 0) {
                 //super.runOpMode(Angle1, false, false);
                 //TimeUnit.SECONDS.sleep(1);
                 //step = step++;
             //}
+            if(step == -1){
+                sleep(20000);
+                step = step + 1;
+            }
             if(step == 0){
                 if(FR.getCurrentPosition() > NumberOfRevs1) {
                     BL.setPower(-.5);

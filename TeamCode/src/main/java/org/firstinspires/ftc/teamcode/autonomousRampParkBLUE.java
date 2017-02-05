@@ -159,6 +159,11 @@ public class autonomousRampParkBLUE extends LinearOpMode {
         double Angle1 = 190;
         double Angle2 = 280;
 
+        //PRACTICE FIELD VALUES: .05, .06
+        //USRA VALUES: .075, .08
+        double beaconOneDistance = .075;
+        double beaconTwoDistance = .08;
+
         imuTest imu = new imuTest("imu", hardwareMap);
 
         while (!isStarted()) {
@@ -292,7 +297,8 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 FL.setPower(0);
                 BL.setPower(0);
                 */
-                if (x > .1 && x < 1.5) {
+                sleep(250);
+                if (x > .1 && x < 3) {
                     //has reached angle therefore end loop
                     FR.setPower(0);
                     FL.setPower(0);
@@ -306,12 +312,12 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                     FL.setPower(.05);
                     BR.setPower(-.05);
                     BL.setPower(.05);
-                } else if (x > 1.5) {
+                } else if (x > 3) {
                     //turn counter-clockwise
-                    FR.setPower(0.05);
-                    FL.setPower(-.05);
-                    BR.setPower(0.05);
-                    BL.setPower(-.05);
+                    FR.setPower(-0.05);
+                    FL.setPower(.05);
+                    BR.setPower(-0.05);
+                    BL.setPower(.05);
                 }
             }
 
@@ -361,7 +367,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
             }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .05) {
+                if(colorOD.getRawLightDetected() < beaconOneDistance) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -380,16 +386,16 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() + 30;
+                NumberOfRevs3 = FL.getCurrentPosition() - 30;
                 step=step+.25;
             }
             //Position
             if(step == 6.75){
-                if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.25);
-                    BR.setPower(.25);
-                    FR.setPower(.25);
-                    FL.setPower(.25);
+                if(FL.getCurrentPosition() > NumberOfRevs3) {
+                    BL.setPower(-.25);
+                    BR.setPower(-.25);
+                    FR.setPower(-.25);
+                    FL.setPower(-.25);
                 }
                 else {
                     BL.setPower(0);
@@ -402,7 +408,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 400;
+                NumberOfRevs3 = FL.getCurrentPosition() - 365;
                 step=step+1;
             }
 
@@ -428,10 +434,10 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 }
                 else if(OppPushSequence){
                     if(FL.getCurrentPosition() > NumberOfRevs3) {
-                        BL.setPower(-.1);
-                        BR.setPower(-.1);
-                        FR.setPower(-.1);
-                        FL.setPower(-.1);
+                        BL.setPower(-.25);
+                        BR.setPower(-.25);
+                        FR.setPower(-.25);
+                        FL.setPower(-.25);
                     }
                     else {
                         BL.setPower(0);
@@ -544,7 +550,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .06) {
+                if(colorOD.getRawLightDetected() < beaconTwoDistance) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -587,7 +593,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 300;
+                NumberOfRevs3 = FL.getCurrentPosition() - 380;
                 step=step+1;
             }
 
@@ -613,10 +619,10 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 }
                 else if(OppPushSequence){
                     if(FL.getCurrentPosition() > NumberOfRevs3) {
-                        BL.setPower(-.1);
-                        BR.setPower(-.1);
-                        FR.setPower(-.1);
-                        FL.setPower(-.1);
+                        BL.setPower(-.25);
+                        BR.setPower(-.25);
+                        FR.setPower(-.25);
+                        FL.setPower(-.25);
                     }
                     else {
                         BL.setPower(0);
@@ -666,7 +672,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 BR.setPower(.5);
                 FL.setPower(.5);
                 BL.setPower(-.5);
-                Thread.sleep(550);
+                Thread.sleep(625);
                 FR.setPower(0);
                 BR.setPower(0);
                 FL.setPower(0);
@@ -674,7 +680,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 step=step+.25;
             }
             if(step == 15.75){
-                NumberOfRevs3 = FL.getCurrentPosition() - 500;
+                NumberOfRevs3 = FL.getCurrentPosition() - 465;
                 step = step + 1.25;
             }
             //TURN
