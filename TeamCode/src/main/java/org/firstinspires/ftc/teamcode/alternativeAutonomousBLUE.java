@@ -152,12 +152,17 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
         double step = 0;
 
         //REVOLUTION VARIABLES
-        int NumberOfRevs1 = -300;
-        int NumberOfRevs2 = -450;
+        int NumberOfRevs1 = -190;
+        int NumberOfRevs2 = -230;
 
         //ANGLE VARIABLES
         double Angle1 = 190;
         double Angle2 = 280;
+
+        //PRACTICE VALUES: .05, .06
+        //USRA VALUES: .075, .08
+        double beaconOneDistance = .075;
+        double beaconTwoDistance = .08;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 
@@ -183,7 +188,6 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             telemetry.addData("BR: ", BR.getCurrentPosition());
 
             telemetry.addData("colorOD: ", colorOD.getRawLightDetected());
-            telemetry.update();
 
             double[] angles = imu.getAngles();
             double yaw = angles[0];
@@ -194,6 +198,10 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             if(x < 0){
                 x = x + 360;
             }
+
+            telemetry.addData(imu.getName(), imu.telemetrize());
+            telemetry.addData("X: ", x);
+            telemetry.update();
 
             //SEQUENCES
             BallG1.setPosition(0);
@@ -238,10 +246,10 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             if(step == 3) {
                 if (!shoot) {
                     if (FL.getCurrentPosition() > NumberOfRevs2) {
-                        BL.setPower(-.5);
-                        BR.setPower(-.5);
-                        FR.setPower(-.5);
-                        FL.setPower(-.5);
+                        BL.setPower(-.25);
+                        BR.setPower(.25);
+                        FR.setPower(.25);
+                        FL.setPower(-.25);
                     } else {
                         BL.setPower(0);
                         BR.setPower(0);
@@ -266,17 +274,27 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 }
             }
             if(step == 3.5) {
-                if (bottomOD.getRawLightDetected() < .08) {
+                sleep(250);
+                if (x > 347 && x < 348) {
+                    //has reached angle therefore end loop
                     FR.setPower(0);
-                    BR.setPower(-1);
-                    FL.setPower(-1);
-                    BL.setPower(0);
-                } else {
-                    FR.setPower(0);
-                    BR.setPower(0);
                     FL.setPower(0);
+                    BR.setPower(0);
                     BL.setPower(0);
-                    step = step + .5;
+                    turnCompleted = true;
+                    step=step+.5;
+                } else if (x < 347) {
+                    //turn clockwise
+                    FR.setPower(-.025);
+                    FL.setPower(.025);
+                    BR.setPower(-.025);
+                    BL.setPower(.025);
+                } else if (x > 348) {
+                    //turn counter-clockwise
+                    FR.setPower(0.025);
+                    FL.setPower(-.025);
+                    BR.setPower(0.025);
+                    BL.setPower(-.025);
                 }
             }
             //Strafe for time
@@ -292,26 +310,17 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 FL.setPower(0);
                 BL.setPower(0);
                 */
-                if (x > .1 && x < 1.5) {
-                    //has reached angle therefore end loop
+                if (bottomOD.getRawLightDetected() < .08) {
+                    FR.setPower(-.75);
+                    BR.setPower(-.75);
+                    FL.setPower(-.75);
+                    BL.setPower(-.75);
+                } else {
                     FR.setPower(0);
-                    FL.setPower(0);
                     BR.setPower(0);
+                    FL.setPower(0);
                     BL.setPower(0);
-                    turnCompleted = true;
-                    step=step+1;
-                } else if (x < .1) {
-                    //turn clockwise
-                    FR.setPower(.1);
-                    FL.setPower(-.1);
-                    BR.setPower(.1);
-                    BL.setPower(-.1);
-                } else if (x > 1.5) {
-                    //turn counter-clockwise
-                    FR.setPower(-0.1);
-                    FL.setPower(.1);
-                    BR.setPower(-0.1);
-                    BL.setPower(.1);
+                    step = step + 1;
                 }
             }
 
@@ -332,6 +341,7 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                     step=step+.5;
                 }
                 */
+                turnCompleted = false;
                 step=step+.5;
             }
             if(step == 5.5){/*
@@ -356,11 +366,32 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                     BR.setPower(0.5);
                     BL.setPower(-.5);
                 }*/
+                sleep(250);
+                if (x > 358 && x < 359) {
+                    //has reached angle therefore end loop
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    BR.setPower(0);
+                    BL.setPower(0);
+                    step=step+.5;
+                } else if (x < 358) {
+                    //turn clockwise
+                    FR.setPower(-.025);
+                    FL.setPower(.025);
+                    BR.setPower(-.025);
+                    BL.setPower(.025);
+                } else if (x > 359) {
+                    //turn counter-clockwise
+                    FR.setPower(0.025);
+                    FL.setPower(-.025);
+                    BR.setPower(0.025);
+                    BL.setPower(-.025);
+                }
                 step = step +.5;
             }
             //set revs3
             if(step == 6){
-                if(colorOD.getRawLightDetected() < .06) {
+                if(colorOD.getRawLightDetected() < beaconOneDistance) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -379,16 +410,16 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 50;
+                NumberOfRevs3 = FL.getCurrentPosition() + 55;
                 step=step+.25;
             }
             //Position
             if(step == 6.75){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.25);
+                    BR.setPower(.25);
+                    FR.setPower(.25);
+                    FL.setPower(.25);
                 }
                 else {
                     BL.setPower(0);
@@ -401,7 +432,7 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 300;
+                NumberOfRevs3 = FL.getCurrentPosition() + 365;
                 step=step+1;
             }
 
@@ -427,10 +458,10 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 }
                 else if(OppPushSequence){
                     if(FL.getCurrentPosition() > NumberOfRevs3) {
-                        BL.setPower(-.1);
-                        BR.setPower(-.1);
-                        FR.setPower(-.1);
-                        FL.setPower(-.1);
+                        BL.setPower(.25);
+                        BR.setPower(.25);
+                        FR.setPower(.25);
+                        FL.setPower(.25);
                     }
                     else {
                         BL.setPower(0);
@@ -481,17 +512,17 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 pushed = false;
                 nearPush = false;
                 OppPushSequence = false;
-                NumberOfRevs3 = FL.getCurrentPosition() - 500;
+                NumberOfRevs3 = FL.getCurrentPosition() + 500;
                 step=step+1;
             }
 
             //move forward
             if(step == 10){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.4);
-                    BR.setPower(-.4);
-                    FR.setPower(-.4);
-                    FL.setPower(-.4);
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.4);
+                    BR.setPower(.4);
+                    FR.setPower(.4);
+                    FL.setPower(.4);
                 }
                 else {
                     BL.setPower(0);
@@ -505,10 +536,10 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             //MOVE to line
             if(step == 11){
                 if(bottomOD.getRawLightDetected() < .08){
-                    FL.setPower(-.4);
-                    BL.setPower(-.4);
-                    FR.setPower(-.4);
-                    BR.setPower(-.4);
+                    FL.setPower(.4);
+                    BL.setPower(.4);
+                    FR.setPower(.4);
+                    BR.setPower(.4);
                 }
                 else{
                     FL.setPower(0);
@@ -543,7 +574,7 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(colorOD.getRawLightDetected() < .06) {
+                if(colorOD.getRawLightDetected() < beaconTwoDistance) {
                     FR.setPower(.1);
                     BR.setPower(-.1);
                     FL.setPower(-.1);
@@ -563,17 +594,17 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             }
             //set revs3
             if(step == 12){
-                NumberOfRevs3 = FL.getCurrentPosition() - 25;
+                NumberOfRevs3 = FL.getCurrentPosition() + 25;
                 step=step+1;
             }
 
             //position
             if(step == 13){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.25);
+                    BR.setPower(.25);
+                    FR.setPower(.25);
+                    FL.setPower(.25);
                 }
                 else {
                     BL.setPower(0);
@@ -586,7 +617,7 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 300;
+                NumberOfRevs3 = FL.getCurrentPosition() + 380;
                 step=step+1;
             }
 
@@ -612,10 +643,10 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 }
                 else if(OppPushSequence){
                     if(FL.getCurrentPosition() > NumberOfRevs3) {
-                        BL.setPower(-.1);
-                        BR.setPower(-.1);
-                        FR.setPower(-.1);
-                        FL.setPower(-.1);
+                        BL.setPower(.25);
+                        BR.setPower(.25);
+                        FR.setPower(.25);
+                        FL.setPower(.25);
                     }
                     else {
                         BL.setPower(0);
@@ -673,8 +704,8 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
                 step=step+.25;
             }
             if(step == 15.75){
-                NumberOfRevs3 = FL.getCurrentPosition() - 500;
-                step = step + .25;
+                NumberOfRevs3 = FL.getCurrentPosition() + 500;
+                step = step + 1.25;
             }
             //TURN
             if(step == 16){
@@ -720,17 +751,17 @@ public class alternativeAutonomousBLUE extends LinearOpMode {
             //set rev3
             if(step == 17){
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 3500;
+                NumberOfRevs3 = FL.getCurrentPosition() + 2000;
                 step=step+1;
             }
 
             //move forward
             if(step == 18){
                 if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(1);
-                    BR.setPower(1);
-                    FR.setPower(1);
-                    FL.setPower(1);
+                    BL.setPower(.75);
+                    BR.setPower(.75);
+                    FR.setPower(.75);
+                    FL.setPower(.75);
                 }
                 else{
                     BL.setPower(0);

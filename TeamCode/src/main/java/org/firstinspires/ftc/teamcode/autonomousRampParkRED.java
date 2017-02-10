@@ -162,8 +162,8 @@ public class autonomousRampParkRED extends LinearOpMode {
 
         //PRACTICE VALUES: .035, .05
         //USRA VALUES: .075, .08
-        double beaconOneDistance = .075;
-        double beaconTwoDistance = .08;
+        double beaconOneDistance = .058;
+        double beaconTwoDistance = .06;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 

@@ -162,8 +162,8 @@ public class autonomousRedNoTurn extends LinearOpMode {
 
         //PRACTICE VALUES: .035, .05
         //USRA: .075, .08
-        double beaconOneDistance = .075;
-        double beaconTwoDistance = .08;
+        double beaconOneDistance = .058;
+        double beaconTwoDistance = .06;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 

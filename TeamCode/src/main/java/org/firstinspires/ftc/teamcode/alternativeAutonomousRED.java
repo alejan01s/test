@@ -417,7 +417,7 @@ public class alternativeAutonomousRED extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 75;
+                NumberOfRevs3 = FL.getCurrentPosition() - 20;
                 step=step+.25;
             }
             //Position
@@ -439,7 +439,7 @@ public class alternativeAutonomousRED extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
-                NumberOfRevs3 = FL.getCurrentPosition() - 400;
+                NumberOfRevs3 = FL.getCurrentPosition() + 400;
                 step=step+1;
             }
 
@@ -465,10 +465,10 @@ public class alternativeAutonomousRED extends LinearOpMode {
                 }
                 else if(OppPushSequence){
                     if(FL.getCurrentPosition() > NumberOfRevs3) {
-                        BL.setPower(-.1);
-                        BR.setPower(-.1);
-                        FR.setPower(-.1);
-                        FL.setPower(-.1);
+                        BL.setPower(.1);
+                        BR.setPower(.1);
+                        FR.setPower(.1);
+                        FL.setPower(.1);
                     }
                     else {
                         BL.setPower(0);
@@ -769,10 +769,10 @@ public class alternativeAutonomousRED extends LinearOpMode {
             //move forward
             if(step == 18){
                 if(FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(1);
-                    BR.setPower(1);
-                    FR.setPower(1);
-                    FL.setPower(1);
+                    BL.setPower(.75);
+                    BR.setPower(.75);
+                    FR.setPower(.75);
+                    FL.setPower(.75);
                 }
                 else{
                     BL.setPower(0);

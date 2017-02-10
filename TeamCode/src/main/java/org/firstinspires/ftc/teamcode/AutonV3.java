@@ -87,6 +87,8 @@ public class AutonV3 extends LinearOpMode {
     public boolean shoot1;
     public boolean fired;
 
+    public double numRevs;
+
     public void initializeRobot () {
 
 
@@ -161,8 +163,8 @@ public class AutonV3 extends LinearOpMode {
 
         //PRACTICE VALUES: .05, .06
         //USRA VALUES: .075, .08
-        double beaconOneDistance = .075;
-        double beaconTwoDistance = .08;
+        double beaconOneDistance = .058;
+        double beaconTwoDistance = .06;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 
@@ -237,6 +239,7 @@ public class AutonV3 extends LinearOpMode {
             }
             if(step == 2){
                 if(!shoot) {
+                    sleep(250);
                     shoot = true;
                     step=step+1;
                 }
@@ -389,16 +392,16 @@ public class AutonV3 extends LinearOpMode {
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 30;
+                NumberOfRevs3 = FL.getCurrentPosition() + 35;
                 step=step+.25;
             }
             //Position
             if(step == 6.75){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
+                if(FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.25);
+                    BR.setPower(.25);
+                    FR.setPower(.25);
+                    FL.setPower(.25);
                 }
                 else {
                     BL.setPower(0);
@@ -411,6 +414,7 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 7){
+                numRevs = FL.getCurrentPosition() - 50;
                 NumberOfRevs3 = FL.getCurrentPosition() - 365;
                 step=step+1;
             }
@@ -428,11 +432,24 @@ public class AutonV3 extends LinearOpMode {
                     OppPushSequence = true;
                 }
                 if(nearPush){
-                    if(!pushed) {
-                        push = true;
+                    if(FL.getCurrentPosition() > numRevs) {
+                        BL.setPower(-.25);
+                        BR.setPower(-.25);
+                        FR.setPower(-.25);
+                        FL.setPower(-.25);
                     }
                     else {
-                        step = step + 1;
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        sleep(5);
+                        if (!pushed) {
+                            push = true;
+                        }
+                        if (pushed) {
+                            step = step + 1;
+                        }
                     }
                 }
                 else if(OppPushSequence){
@@ -497,19 +514,19 @@ public class AutonV3 extends LinearOpMode {
 
             //move forward
             if(step == 10){
-                if(FL.getCurrentPosition() > NumberOfRevs3) {
-                    BL.setPower(-.4);
-                    BR.setPower(-.4);
-                    FR.setPower(-.4);
-                    FL.setPower(-.4);
-                }
-                else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step=step+1;
-                }
+                //if(FL.getCurrentPosition() > NumberOfRevs3) {
+                //BL.setPower(-.4);
+                //BR.setPower(-.4);
+                //FR.setPower(-.4);
+                //FL.setPower(-.4);
+                //}
+                //else {
+                // BL.setPower(0);
+                //BR.setPower(0);
+                //FR.setPower(0);
+                //FL.setPower(0);
+                step=step+1;
+                //}
             }
 
             //MOVE to line
@@ -596,7 +613,7 @@ public class AutonV3 extends LinearOpMode {
 
             //set possible rev3
             if(step == 14){
-                NumberOfRevs3 = FL.getCurrentPosition() - 380;
+                NumberOfRevs3 = FL.getCurrentPosition() - 340;
                 step=step+1;
             }
 
