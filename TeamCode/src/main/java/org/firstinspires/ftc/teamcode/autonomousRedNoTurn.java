@@ -929,6 +929,7 @@ public class autonomousRedNoTurn extends LinearOpMode {
                 } else if (LauncherM.getCurrentPosition() <= 525 + (EncoderClicks - 2510)) {
                     LauncherM.setPower(.08);
                 } else {
+
                     pause = true;
                 }
                 if (pause) {
