@@ -1264,8 +1264,8 @@ public class autonomousRampParkBLUE extends LinearOpMode {
 
         //PRACTICE FIELD VALUES: .05, .06
         //USRA VALUES: .075, .08
-        double beaconOneDistance = .058;
-        double beaconTwoDistance = .06;
+        double beaconOneDistance = .06;
+        double beaconTwoDistance = .065;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 
@@ -1347,10 +1347,10 @@ public class autonomousRampParkBLUE extends LinearOpMode {
             if(step == 3) {
                 if (!shoot) {
                     if (FL.getCurrentPosition() < NumberOfRevs2) {
-                        BL.setPower(.25);
-                        BR.setPower(.25);
-                        FR.setPower(.25);
-                        FL.setPower(.25);
+                        BL.setPower(.1);
+                        BR.setPower(.1);
+                        FR.setPower(.1);
+                        FL.setPower(.1);
                     } else {
                         BL.setPower(0);
                         BR.setPower(0);
@@ -1375,7 +1375,7 @@ public class autonomousRampParkBLUE extends LinearOpMode {
                 }
             }
             if(step == 3.5) {
-                if (bottomOD.getRawLightDetected() < .08) {
+                if (bottomOD.getRawLightDetected() < .04) {
                     FR.setPower(0);
                     BR.setPower(-1);
                     FL.setPower(-1);

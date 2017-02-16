@@ -1238,8 +1238,8 @@ public class autonomousRampParkRED extends LinearOpMode {
         double step = 0;
 
         //REVOLUTION VARIABLES
-        int NumberOfRevs1 = -250;
-        int NumberOfRevs2 = -410;
+        int NumberOfRevs1 = -220;
+        int NumberOfRevs2 = -240;
 
         //ANGLE VARIABLES
         double Angle1 = 190;
@@ -1247,8 +1247,8 @@ public class autonomousRampParkRED extends LinearOpMode {
 
         //PRACTICE VALUES: .035, .05
         //USRA VALUES: .075, .08
-        double beaconOneDistance = .01;
-        double beaconTwoDistance = .036;
+        double beaconOneDistance = .053;
+        double beaconTwoDistance = .056;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 
@@ -1374,7 +1374,7 @@ public class autonomousRampParkRED extends LinearOpMode {
             }
             //Strafe for time
             if(step == 4){
-                if(bottomOD.getRawLightDetected() < .08) {
+                if(bottomOD.getRawLightDetected() < .04) {
                     FR.setPower(-1);
                     BR.setPower(0);
                     FL.setPower(0);
