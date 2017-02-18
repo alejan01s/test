@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.concurrent.TimeUnit;
+import java.util.Timer;
 
 /**
  * Created by aleja on 10/14/2016.
@@ -13,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Main TeleOp", group="Linear Opmode")
 public class TeleOperations extends LinearOpMode {
+    Timer timer = new Timer();
 
     public boolean downenabled;
     public boolean upenabled;
@@ -73,6 +77,9 @@ public class TeleOperations extends LinearOpMode {
     public boolean buttonInit;
 
     public boolean overrideLift;
+
+    public boolean runReload;
+    public boolean runReloaderDown;
 
     public void initializeRobot() throws InterruptedException {
 
@@ -196,6 +203,7 @@ public class TeleOperations extends LinearOpMode {
             */
 
             //360 DEGREES = 2745 CLICKS; 30 DEGREES HOLD FOR RELOAD; 130 DEGREES BALL FIRES
+            /*
             if(gamepad1.right_trigger > .75){
                 shoot = true;
             }
@@ -234,7 +242,38 @@ public class TeleOperations extends LinearOpMode {
                     }
                 }
             }
+            */
 
+            /*
+
+            NEW SHOOTING SEQUENCE
+
+            */
+
+            if(gamepad1.right_trigger > .75){
+                shoot = true;
+            }
+
+            if(shoot) {
+                if(LauncherM.getCurrentPosition() <=200 + (EncoderClicks - 2520)) {
+                    Reloader.setPosition(.65);
+                    LauncherM.setPower(.5);
+                }
+                else if (LauncherM.getCurrentPosition() <= 550 + (EncoderClicks - 2520)) {
+                    LauncherM.setPower(1);
+                }
+                else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
+                    Reloader.setPosition(.1);
+                    LauncherM.setPower(1);
+                }
+                else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    LauncherM.setPower(.1);
+                } else {
+                    LauncherM.setPower(0);
+                    shoot = false;
+                    EncoderClicks = EncoderClicks + 2520;
+                }
+            }
             /*
 
             CODE FOR FIRE SEQUENCE ONLY
@@ -858,6 +897,26 @@ public class TeleOperations extends LinearOpMode {
                 buttonPusher.setPosition(.5);
                 moveButton = false;
                 buttonHold = 0;
+            }
+            */
+            /*
+            boolean runLoadSequence = gamepad1.left_trigger > .25 ? true : false;
+
+            if(runLoadSequence){
+                runReloaderDown = false;
+                runReload = true;
+            }
+            if(runReload){
+                Reloader.setPosition(.7);
+                if(Reloader.getPosition() == .7){
+                    runReloaderDown = true;
+                }
+                if(runReloaderDown){
+                    Reloader.setPosition(.1);
+                    if(Reloader.getPosition() == .1) {
+                        runReload = false;
+                    }
+                }
             }
             */
             idle();
