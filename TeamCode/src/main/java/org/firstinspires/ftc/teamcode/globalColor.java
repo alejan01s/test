@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
  * Created by Trevor A. Babb on 02/15/2017.
  */
 
-
-@TeleOp(name = "I2C_Global", group = "Linear Opmode")
+@Disabled
+@TeleOp(name = "forget", group = "Linear Opmode")
 public class globalColor extends OpMode {
 
     I2cDevice ColorR;
