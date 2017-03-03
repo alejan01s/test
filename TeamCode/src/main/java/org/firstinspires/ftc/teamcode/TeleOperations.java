@@ -33,7 +33,7 @@ public class TeleOperations extends LinearOpMode {
     public DcMotor Roller;
 
     //LAUNCHER VARIABLES
-    public double EncoderClicks = 2520;
+    public double EncoderClicks;
     public boolean shoot = false;
     public boolean pause = false;
     public boolean resume = false;
@@ -168,6 +168,8 @@ public class TeleOperations extends LinearOpMode {
         boolean rRanDown = false;
         tensionLift = false;
 
+        EncoderClicks = LauncherM.getCurrentPosition() + 2520;
+
         waitForStart();
         while(opModeIsActive()){
 
@@ -255,17 +257,23 @@ public class TeleOperations extends LinearOpMode {
             }
 
             if(shoot) {
-                if(LauncherM.getCurrentPosition() <=200 + (EncoderClicks - 2520)) {
-                    Reloader.setPosition(.65);
-                    LauncherM.setPower(.5);
+
+                if(LauncherM.getCurrentPosition() <= 1400 + (EncoderClicks - 2520))
+                {
+
+                    Reloader.setPosition(0.65);
+                    LauncherM.setPower(0.75);
+
                 }
-                else if (LauncherM.getCurrentPosition() <= 550 + (EncoderClicks - 2520)) {
+
+                else if(LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520))
+                {
+
+                    Reloader.setPosition(0.1);
                     LauncherM.setPower(1);
+
                 }
-                else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
-                    Reloader.setPosition(.1);
-                    LauncherM.setPower(1);
-                }
+
                 else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                     LauncherM.setPower(.1);
                 } else {
@@ -273,7 +281,46 @@ public class TeleOperations extends LinearOpMode {
                     shoot = false;
                     EncoderClicks = EncoderClicks + 2520;
                 }
+
+//                if(LauncherM.getCurrentPosition() <=325 + (EncoderClicks - 2520)) {
+//                    Reloader.setPosition(.65);
+//                    LauncherM.setPower(.42);
+//                }
+//                else if (LauncherM.getCurrentPosition() <= 500 + (EncoderClicks - 2520)) {
+//                    LauncherM.setPower(1);
+//                }
+//                else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520)) {
+//                    Reloader.setPosition(.1);
+//                    LauncherM.setPower(1);
+//                }
+//                else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+//                    LauncherM.setPower(.1);
+//                } else {
+//                    LauncherM.setPower(0);
+//                    shoot = false;
+//                    EncoderClicks = EncoderClicks + 2520;
+//                }
             }
+
+            if(!shoot && !fire)
+            {
+
+                if(LauncherM.getCurrentPosition() > (EncoderClicks - 2520))
+                {
+
+                    LauncherM.setPower(-0.07);
+
+                }
+
+                if(LauncherM.getCurrentPosition() < (EncoderClicks - 2520))
+                {
+
+                    LauncherM.setPower(0.07);
+
+                }
+
+            }
+
             /*
 
             CODE FOR FIRE SEQUENCE ONLY
