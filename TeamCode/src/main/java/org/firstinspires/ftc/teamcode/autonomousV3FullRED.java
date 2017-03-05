@@ -151,6 +151,13 @@ public class autonomousV3FullRED extends OpMode {
     public boolean shoot1;
     public boolean fired;
 
+    boolean lookEnable = false;
+    boolean recordRealVal = false;
+
+    public boolean firstCollect = true;
+
+    public boolean launcherCorrect = true;
+
     imuTest imu;
 
     @Override
@@ -276,8 +283,8 @@ public class autonomousV3FullRED extends OpMode {
         double step = 0;
 
         //REVOLUTION VARIABLES
-        int NumberOfRevs1 = -100;
-        int NumberOfRevs2 = -140;
+        int NumberOfRevs1 = -200;
+        int NumberOfRevs2 = -900;
 
         //ANGLE VARIABLES
         double Angle1 = 190;
@@ -319,13 +326,6 @@ public class autonomousV3FullRED extends OpMode {
 
             //Reading the Color Sensors
 
-            //Obtaining the Color Number
-            ColorRNumber = ColorRReader.read(0x04, 1);
-            ColorLNumber = ColorLReader.read(0x04, 1);
-
-            CRNumber = ColorRNumber[0] & 0xFF;
-            CLNumber = ColorLNumber[0] & 0xFF;
-
             //Obtaining the Red Value
             ColorRRed = ColorRReader.read(0x05, 1);
             ColorLRed = ColorLReader.read(0x05, 1);
@@ -333,27 +333,12 @@ public class autonomousV3FullRED extends OpMode {
             CRRed = ColorRRed[0] & 0xFF;
             CLRed = ColorLRed[0] & 0xFF;
 
-            //Obtaining the Green Value
-            ColorRGreen = ColorRReader.read(0x06, 1);
-            ColorLGreen = ColorLReader.read(0x06, 1);
-
-            CRGreen = ColorRGreen[0] & 0xFF;
-            CLGreen = ColorLGreen[0] & 0xFF;
-
             //Obtaining the Blue Value
             ColorRBlue = ColorRReader.read(0x07, 1);
             ColorLBlue = ColorLReader.read(0x07, 1);
 
             CRBlue = ColorRBlue[0] & 0xFF;
             CLBlue = ColorLBlue[0] & 0xFF;
-
-            //Obtaining the White Value
-            ColorRWhite = ColorRReader.read(0x08, 1);
-            ColorLWhite = ColorLReader.read(0x08, 1);
-
-            CRWhite = ColorRWhite[0] & 0xFF;
-            CLWhite = ColorLWhite[0] & 0xFF;
-
 
             //Reading the Sonar Sensors
 
@@ -364,23 +349,6 @@ public class autonomousV3FullRED extends OpMode {
                 //Command the Sonars to Take a Snapshot
                 SonarRReader.write8(0, 82);
                 SonarLReader.write8(0, 82);
-
-                //Put the Robot to Sleep for 75ms to Allow Sonars to Finish
-                Sleep = 75;
-
-                if (SleepEnable == 1) {
-
-                    WakeUpTime = System.currentTimeMillis() + Sleep;
-
-                    while (System.currentTimeMillis() < WakeUpTime) {
-
-                    }
-
-                    Sleep = 0;
-
-                    SleepEnable = 2;
-
-                }
 
                 //Save the High and Low Bytes for the Right Sensor from the Last Snapshot
                 RightDistanceTimeH = SonarRReader.read(0x02, 1);
@@ -394,176 +362,8 @@ public class autonomousV3FullRED extends OpMode {
                 RightDistanceTime = ((RightDistanceTimeH[0] & 0xFF) * 256) + (RightDistanceTimeL[0] & 0xFF);
                 LeftDistanceTime = ((LeftDistanceTimeH[0] & 0xFF) * 256) + (LeftDistanceTimeL[0] & 0xFF);
 
-                //Print These Values to the Screen
-                telemetry.addData("Right Distance MicroSeconds: ", RightDistanceTime);
-                telemetry.addData("Left Distance MicroSeconds: ", LeftDistanceTime);
-
                 //Turn Off Distance in MicroSeconds Method
                 CollectDistanceTime = false;
-
-            }
-
-            //Reading Distance in Inches
-            if (CollectDistanceIN == true)//Once the CollectDistanceIN boolean is switched on, the robot takes a snapshot of the distance in Inches
-            {
-
-                //Command the Sonars to Take a Snapshot
-                SonarRReader.write8(0, 80);
-                SonarLReader.write8(0, 80);
-
-                //Put the Robot to Sleep for 75ms to Allow Sonars to Finish
-                Sleep = 75;
-
-                if (SleepEnable == 1) {
-
-                    WakeUpTime = System.currentTimeMillis() + Sleep;
-
-                    while (System.currentTimeMillis() < WakeUpTime) {
-
-                    }
-
-                    Sleep = 0;
-
-                    SleepEnable = 2;
-
-                }
-
-                //Save Values
-                RightDistanceIN = SonarRReader.read(0x03, 1);
-                LeftDistanceIN = SonarLReader.read(0x03, 1);
-
-                RightIN = RightDistanceIN[0] & 0xFF;
-                LeftIN = LeftDistanceIN[0] & 0xFF;
-
-                //Print These Values to the Screen
-                telemetry.addData("Right Distance IN: ", RightIN);
-                telemetry.addData("Left Distance IN: ", LeftIN);
-
-                //Turn Off Distance in Inches Method
-                CollectDistanceIN = false;
-
-            }
-
-            //Reading Distance in CM
-            if (CollectDistanceCM == true)//Once the CollectDistanceCM boolean is switched on, the robot takes a snapshot of the distance in Centimeters
-            {
-
-                //Command the Sonars to Take a Snapshot
-                SonarRReader.write8(0, 81);
-                SonarLReader.write8(0, 81);
-
-                //Put the Robot to Sleep for 75ms to Allow Sonars to Finish
-                Sleep = 75;
-
-                if (SleepEnable == 1) {
-
-                    WakeUpTime = System.currentTimeMillis() + Sleep;
-
-                    while (System.currentTimeMillis() < WakeUpTime) {
-
-                    }
-
-                    Sleep = 0;
-
-                    SleepEnable = 2;
-
-                }
-
-                //Save Values
-                RightDistanceCM = SonarRReader.read(0x03, 1);
-                LeftDistanceCM = SonarLReader.read(0x03, 1);
-
-                RightCM = RightDistanceCM[0] & 0xFF;
-                LeftCM = LeftDistanceCM[0] & 0xFF;
-
-                //Print These Values to the Screen
-                telemetry.addData("Right Distance CM: ", RightCM);
-                telemetry.addData("Left Distance CM: ", LeftCM);
-
-                //Turn Off Distance in Inches Method
-                CollectDistanceCM = false;
-
-            }
-
-            //Enable Sleep Method
-            if ((CollectDistanceTime || CollectDistanceIN || CollectDistanceCM) && SleepEnable == 2) {
-
-                SleepEnable = 1;
-
-            }
-
-            //Ensuring that Only One Distance Method Runs at a Time
-            if (CollectDistanceTime) {
-
-                CollectDistanceIN = false;
-                CollectDistanceCM = false;
-
-            }
-
-            if (CollectDistanceIN) {
-
-                CollectDistanceTime = false;
-                CollectDistanceCM = false;
-
-            }
-
-            if (CollectDistanceCM) {
-
-                CollectDistanceTime = false;
-                CollectDistanceIN = false;
-
-            }
-
-
-            if (gamepad1.x) {
-
-                CollectDistanceTime = true;
-
-            }
-
-            if (gamepad1.a) {
-
-                CollectDistanceIN = true;
-
-            }
-
-            if (gamepad1.b) {
-
-                CollectDistanceCM = true;
-
-            }
-
-            if (gamepad1.start && !CollectDistanceTime && !CollectDistanceIN && !CollectDistanceCM)
-            {
-
-                ColorReadGamepadToggle = true;
-
-            }
-
-            if (gamepad1.back)
-            {
-
-                ColorReadGamepadToggle = false;
-
-            }
-
-            if(ColorReadGamepadToggle == true)
-            {
-
-                telemetry.addData("Right Color#: ", CRNumber);
-                telemetry.addData("Left Color#: ", CLNumber);
-
-                telemetry.addData("Right Color Red: ", CRRed);
-                telemetry.addData("Left Color Red: ", CLRed);
-
-                telemetry.addData("Right Color Green: ", CRGreen);
-                telemetry.addData("Left Color Green: ", CLGreen);
-
-                telemetry.addData("Right Color Blue: ", CRBlue);
-                telemetry.addData("Left Color Blue: ", CLBlue);
-
-                telemetry.addData("Right Color White: ", CRWhite);
-                telemetry.addData("Left Color White: ", CLWhite);
 
             }
 
@@ -575,14 +375,17 @@ public class autonomousV3FullRED extends OpMode {
             bottomOD.enableLed(true);
             frontOD.enableLed(true);
 
-            CollectDistanceTime = true;
+            if(firstCollect){
+                CollectDistanceTime = true;
+                firstCollect = false;
+            }
 
             //colorSensor.enableLed(false);
             //isRed = colorSensor.red() >= 1 && colorSensor.red() > colorSensor.blue() ? true : false;
             //isBlue = colorSensor.blue() >= 1 && colorSensor.blue() > colorSensor.red() ? true : false;
 
-            isRed = CLRed > CLBlue && CLRed > 5 ? true : false;
-            isBlue = CLBlue > CLRed && CLBlue > 5 ? true : false;
+            isRed = CLRed > CLBlue && CLRed >= 1 ? true : false;
+            isBlue = CLBlue > CLRed && CLBlue >= 1 ? true : false;
 
             telemetry.addData("Encoder Clicks: ", LauncherM.getCurrentPosition());
 
@@ -594,6 +397,9 @@ public class autonomousV3FullRED extends OpMode {
             telemetry.addData("colorOD: ", colorOD.getRawLightDetected());
             telemetry.addData("Red: ", CLRed);
             telemetry.addData("Blue: ", CLBlue);
+
+            telemetry.addData("Left Distance Time: ", LeftDistanceTime);
+            telemetry.addData("Bottom OD: ", bottomOD);
 
             double[] angles = imu.getAngles();
             double yaw = angles[0];
@@ -616,18 +422,19 @@ public class autonomousV3FullRED extends OpMode {
 
             //MOVE FORWARD
             if(step == 0){
-                if(FL.getCurrentPosition() > NumberOfRevs1) {
-                    BL.setPower(-.25);
-                    BR.setPower(-.25);
-                    FR.setPower(-.25);
-                    FL.setPower(-.25);
-                }
-                else{
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step=step+1;
+                if(!firstCollect) {
+                    if (FL.getCurrentPosition() > NumberOfRevs1) {
+                        BL.setPower(-.25);
+                        BR.setPower(-.25);
+                        FR.setPower(-.25);
+                        FL.setPower(-.25);
+                    } else {
+                        BL.setPower(0);
+                        BR.setPower(0);
+                        FR.setPower(0);
+                        FL.setPower(0);
+                        step = step + 1;
+                    }
                 }
             }
 
@@ -660,6 +467,8 @@ public class autonomousV3FullRED extends OpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
+
+                        NumberOfRevs3 = FR.getCurrentPosition() - 4250;
                         step = step + 1;
                     }
                 }
@@ -668,8 +477,9 @@ public class autonomousV3FullRED extends OpMode {
                 if (LauncherM.getCurrentPosition() <= 2000) {
                     LauncherM.setPower(1);
                 }
-                else if (LauncherM.getCurrentPosition() <= 2450) {
+                else if (LauncherM.getCurrentPosition() <= 2510) {
                     LauncherM.setPower(.08);
+                    Reloader.setPosition(.65);
                 }
                 else{
                     LauncherM.setPower(0);
@@ -693,8 +503,8 @@ public class autonomousV3FullRED extends OpMode {
                     BL.setPower(0);
                     step = step + 1;
                 }*/
-                if(LeftDistanceTime > 2000){
-                    CollectDistanceTime = true;
+
+                if(FR.getCurrentPosition() > NumberOfRevs3){
                     FR.setPower(-1);
                     BR.setPower(0);
                     FL.setPower(0);
@@ -705,19 +515,7 @@ public class autonomousV3FullRED extends OpMode {
                     BR.setPower(0);
                     FL.setPower(0);
                     BL.setPower(0);
-                    if (bottomOD.getRawLightDetected() < .01) {
-                        FR.setPower(.05);
-                        BR.setPower(.05);
-                        FL.setPower(.05);
-                        BL.setPower(.05);
-                    }
-                    else {
-                        FR.setPower(0);
-                        BR.setPower(0);
-                        FL.setPower(0);
-                        BL.setPower(0);
-                        step = step + 1;
-                    }
+                    step = step + 1;
                 }
             }
 
@@ -738,106 +536,91 @@ public class autonomousV3FullRED extends OpMode {
                     step=step+.5;
                 }
                 */
-                sleepOn = true;
-                timeToSleep = 250;
-
-                if (sleepOn) {
-
-                    timeToWake = System.currentTimeMillis() + timeToSleep;
-
-                    while (System.currentTimeMillis() < timeToWake) {
-
-                    }
-
-                    timeToSleep = 0;
-
-                    sleepOn = false;
-
+                if (bottomOD.getRawLightDetected() < .01) {
+                    FR.setPower(.1);
+                    BR.setPower(.1);
+                    FL.setPower(.1);
+                    BL.setPower(.1);
                 }
-                step = step + .75;
+                else {
+                    FR.setPower(0);
+                    BR.setPower(0);
+                    FL.setPower(0);
+                    BL.setPower(0);
+                    step = step + .5;
+                }
             }
-            /*if(step == 5.5){
-                if (x > .5 && x < 1.5) {
+            if(step == 5.5){
+//                if (x > .5 && x < 1.5) {
+//                    //has reached angle therefore end loop
+//                    FR.setPower(0);
+//                    FL.setPower(0);
+//                    BR.setPower(0);
+//                    BL.setPower(0);
+//                    turnCompleted = true;
+//                    step=step+.25;
+//                } else if (x < .5) {
+//                    //turn clockwise
+//                    FR.setPower(-.05);
+//                    FL.setPower(.05);
+//                    BR.setPower(-.05);
+//                    BL.setPower(.05);
+//                } else if (x > 1.5) {
+//                    //turn counter-clockwise
+//                    FR.setPower(0.05);
+//                    FL.setPower(-.05);
+//                    BR.setPower(0.05);
+//                    BL.setPower(-.05);
+//                }
+                if (yaw > -4 && yaw < -1) {
                     //has reached angle therefore end loop
                     FR.setPower(0);
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
-                    turnCompleted = true;
                     step=step+.25;
-                } else if (x < .5) {
+                } else if (yaw < -4) {
                     //turn clockwise
                     FR.setPower(-.05);
                     FL.setPower(.05);
                     BR.setPower(-.05);
                     BL.setPower(.05);
-                } else if (x > 1.5) {
+                } else if (yaw > -1) {
                     //turn counter-clockwise
                     FR.setPower(0.05);
                     FL.setPower(-.05);
                     BR.setPower(0.05);
                     BL.setPower(-.05);
                 }
-            }*/
+            }
             if(step == 5.75){
                 turnCompleted = false;
-                NumberOfRevs3 = FL.getCurrentPosition() + 75;
+                NumberOfRevs3 = FL.getCurrentPosition() + 100;
                 step = step + .2;
             }
             if(step == 5.95) {
-                if (FL.getCurrentPosition() < NumberOfRevs3) {
-                    BL.setPower(.1);
-                    BR.setPower(.1);
-                    FR.setPower(.1);
-                    FL.setPower(.1);
-                } else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    step = step + .05;
-                }
+//                if (FL.getCurrentPosition() < NumberOfRevs3) {
+//                    BL.setPower(.1);
+//                    BR.setPower(.1);
+//                    FR.setPower(.1);
+//                    FL.setPower(.1);
+//                } else {
+//                    BL.setPower(0);
+//                    BR.setPower(0);
+//                    FR.setPower(0);
+//                    FL.setPower(0);
+                launcherCorrect = false;
+                step = step + .05;
+                //}
             }
             //set revs3
             if(step == 6){
-                if(leftDisMS > 1000) {
-                    FR.setPower(-.2);
-                    BR.setPower(.2);
-                    FL.setPower(.2);
-                    BL.setPower(-.2);
-
-                    if(runCheck){
-                        timeToSleep = 100;
-
-                        if (runCheck) {
-
-                            timeToWake = System.currentTimeMillis() + timeToSleep;
-
-                            while (System.currentTimeMillis() < timeToWake) {
-
-                            }
-
-                            timeToSleep = 0;
-
-                            runCheck = false;
-
-                        }
-                    }
-
-                    if(!runCheck){
-                        CollectDistanceTime = true;
-                        runCheck = true;
-                    }
-
-                    rightDisIN = RightIN;
-                    leftDisIN = LeftIN;
-
-                    rightDisCM = RightCM;
-                    leftDisCM = LeftCM;
-
-                    rightDisMS = RightDistanceTime;
-                    leftDisMS = LeftDistanceTime;
-
+                if(LeftDistanceTime > 1000) {
+                    CollectDistanceTime = true;
+                    FR.setPower(-.075);
+                    BR.setPower(.075);
+                    FL.setPower(.075);
+                    BL.setPower(-.075);
                 }
                 else {
                     FR.setPower(0);
@@ -847,12 +630,13 @@ public class autonomousV3FullRED extends OpMode {
                     turnCompleted = true;
                 }
                 if(turnCompleted){
+                    CollectDistanceTime = false;
                     step = step + .5;
                     turnCompleted = false;
                 }
             }
             if(step == 6.5){
-                NumberOfRevs3 = FL.getCurrentPosition() - 115;
+                NumberOfRevs3 = FL.getCurrentPosition() - 25;
                 step=step+.25;
             }
             //Position
@@ -881,8 +665,8 @@ public class autonomousV3FullRED extends OpMode {
 
             //Detect color
             if(step == 8){
-                isRed = CLRed > CLBlue && CLRed > 5 ? true : false;
-                isBlue = CLBlue > CLRed && CLBlue > 5 ? true : false;
+                isRed = CLRed > CLBlue && CLRed >= 1 ? true : false;
+                isBlue = CLBlue > CLRed && CLBlue >= 1 ? true : false;
                 if(isRed && !OppPushSequence){
                     //push button
                     nearPush = true;
@@ -910,28 +694,28 @@ public class autonomousV3FullRED extends OpMode {
                         FR.setPower(0);
                         FL.setPower(0);
 
-                        sleepOn = true;
-                        timeToSleep = 5;
-
-                        if (sleepOn) {
-
-                            timeToWake = System.currentTimeMillis() + timeToSleep;
-
-                            while (System.currentTimeMillis() < timeToWake) {
-
-                            }
-
-                            timeToSleep = 0;
-
-                            sleepOn = false;
-
-                        }
-
+//                        sleepOn = true;
+//                        timeToSleep = 5;
+//
+//                        if (sleepOn) {
+//
+//                            timeToWake = System.currentTimeMillis() + timeToSleep;
+//
+//                            while (System.currentTimeMillis() < timeToWake) {
+//
+//                            }
+//
+//                            timeToSleep = 0;
+//
+//                            sleepOn = false;
+//
+//                        }
+//
                         if (!pushed) {
                             push = true;
                         } else {
                             step = step + 1;
-                        }
+                    }
 
                     }
                 }
@@ -947,22 +731,22 @@ public class autonomousV3FullRED extends OpMode {
                         BR.setPower(0);
                         FR.setPower(0);
                         FL.setPower(0);
-                        sleepOn = true;
-                        timeToSleep = 5;
-
-                        if (sleepOn) {
-
-                            timeToWake = System.currentTimeMillis() + timeToSleep;
-
-                            while (System.currentTimeMillis() < timeToWake) {
-
-                            }
-
-                            timeToSleep = 0;
-
-                            sleepOn = false;
-
-                        }
+//                        sleepOn = true;
+//                        timeToSleep = 5;
+//
+//                        if (sleepOn) {
+//
+//                            timeToWake = System.currentTimeMillis() + timeToSleep;
+//
+//                            while (System.currentTimeMillis() < timeToWake) {
+//
+//                            }
+//
+//                            timeToSleep = 0;
+//
+//                            sleepOn = false;
+//
+//                        }
                         if (!pushed) {
                             push = true;
                         }
@@ -1029,11 +813,11 @@ public class autonomousV3FullRED extends OpMode {
 
             //MOVE to line
             if(step == 11){
-                if(bottomOD.getRawLightDetected() < .08){
-                    FL.setPower(-.4);
-                    BL.setPower(-.4);
-                    FR.setPower(-.4);
-                    BR.setPower(-.4);
+                if(bottomOD.getRawLightDetected() < .015){
+                    FL.setPower(-.1);
+                    BL.setPower(-.1);
+                    FR.setPower(-.1);
+                    BR.setPower(-.1);
                 }
                 else{
                     FL.setPower(0);
@@ -1068,7 +852,8 @@ public class autonomousV3FullRED extends OpMode {
                 step = step + .25;
             }
             if(step == 11.5){
-                if(leftDisMS > 1000) {
+                CollectDistanceTime = true;
+                if(LeftDistanceTime > 1000) {
                     FR.setPower(-.1);
                     BR.setPower(.1);
                     FL.setPower(.1);
@@ -1117,8 +902,8 @@ public class autonomousV3FullRED extends OpMode {
 
             //Detect color
             if(step == 15){
-                isRed = CLRed > CLBlue && CLRed > 5 ? true : false;
-                isBlue = CLBlue > CLRed && CLBlue > 5 ? true : false;
+                isRed = CLRed > CLBlue && CLRed >= 1 ? true : false;
+                isBlue = CLBlue > CLRed && CLBlue >= 1 ? true : false;
                 if(isRed && !OppPushSequence){
                     //push button
                     nearPush = true;
@@ -1319,38 +1104,42 @@ public class autonomousV3FullRED extends OpMode {
             }
             else{
                 buttonPusher.setPosition(.6);
-                sleepOn = true;
-                timeToSleep = 1500;
+                for(int i = 0; i < 10; i++) {
+                    sleepOn = true;
+                    timeToSleep = 225;
 
-                if (sleepOn) {
+                    if (sleepOn) {
 
-                    timeToWake = System.currentTimeMillis() + timeToSleep;
+                        timeToWake = System.currentTimeMillis() + timeToSleep;
 
-                    while (System.currentTimeMillis() < timeToWake) {
+                        while (System.currentTimeMillis() < timeToWake) {
+
+                        }
+
+                        timeToSleep = 0;
+
+                        sleepOn = false;
 
                     }
-
-                    timeToSleep = 0;
-
-                    sleepOn = false;
-
                 }
                 buttonPusher.setPosition(.4);
-                sleepOn = true;
-                timeToSleep = 1500;
+                for(int i = 0; i < 10; i++) {
+                    sleepOn = true;
+                    timeToSleep = 225;
 
-                if (sleepOn) {
+                    if (sleepOn) {
 
-                    timeToWake = System.currentTimeMillis() + timeToSleep;
+                        timeToWake = System.currentTimeMillis() + timeToSleep;
 
-                    while (System.currentTimeMillis() < timeToWake) {
+                        while (System.currentTimeMillis() < timeToWake) {
+
+                        }
+
+                        timeToSleep = 0;
+
+                        sleepOn = false;
 
                     }
-
-                    timeToSleep = 0;
-
-                    sleepOn = false;
-
                 }
                 buttonInit = false;
                 push = false;
@@ -1383,21 +1172,24 @@ public class autonomousV3FullRED extends OpMode {
                     EncoderClicks = EncoderClicks + 2510;
                 }
             }
-            if(!shoot && !shoot1){
-                if(LauncherM.getCurrentPosition() > (EncoderClicks - 2510))
-                {
-
-                    LauncherM.setPower(-0.07);
-
-                }
-
-                if(LauncherM.getCurrentPosition() < (EncoderClicks - 2510))
-                {
-
-                    LauncherM.setPower(0.07);
-
-                }
-            }
+//            if(!shoot && !shoot1 && launcherCorrect){
+//                if(launcherCorrect) {
+//                    if (LauncherM.getCurrentPosition() > (EncoderClicks - 2510)) {
+//
+//                        LauncherM.setPower(-0.07);
+//
+//                    }
+//
+//                    if (LauncherM.getCurrentPosition() < (EncoderClicks - 2510)) {
+//
+//                        LauncherM.setPower(0.07);
+//
+//                    }
+//                }
+//                else{
+//                    LauncherM.setPower(0);
+//                }
+//            }
     }
 
     @Override

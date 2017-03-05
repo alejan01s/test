@@ -1268,8 +1268,8 @@ public class AutonV3 extends LinearOpMode {
 
         //PRACTICE VALUES: .058, .06
         //USRA VALUES: .075, .08
-        double beaconOneDistance = .06;
-        double beaconTwoDistance = .065;
+        double beaconOneDistance = .078;
+        double beaconTwoDistance = .07;
 
         imuTest imu = new imuTest("imu", hardwareMap);
 
@@ -1929,40 +1929,41 @@ public class AutonV3 extends LinearOpMode {
              */
 
             if(shoot) {
-                if (!resume) {
-                    if (LauncherM.getCurrentPosition() <= 400 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(1);
-                    } else if (LauncherM.getCurrentPosition() <= 600 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(1);
-                    } else {
-                        pause = true;
-                    }
-                    if (pause) {
-                        //INPUT RELOAD FUNCTION WHEN READY HERE
-                        LauncherM.setPower(0.1);
-                        Reloader.setPosition(.65);
-                        resume = true;
-                        pause = false;
-                    }
+
+                if (LauncherM.getCurrentPosition() <= 1400 + (EncoderClicks - 2510)) {
+
+                    Reloader.setPosition(0.65);
+                    LauncherM.setPower(0.75);
+
+                } else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2510)) {
+
+                    Reloader.setPosition(0.1);
+                    LauncherM.setPower(1);
+
+                } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    LauncherM.setPower(.1);
+                } else {
+                    LauncherM.setPower(0);
+                    shoot = false;
+                    EncoderClicks = EncoderClicks + 2510;
                 }
-                if (resume) {
-                    if (LauncherM.getCurrentPosition() > 600 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 1150 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(.1);
-                    } else if (LauncherM.getCurrentPosition() > 1150 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= 2255 + (EncoderClicks - 2510)) {
-                        LauncherM.setPower(1);
-                        Reloader.setPosition(0.1);
-                    } else if (LauncherM.getCurrentPosition() > 2255 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
-                        LauncherM.setPower(.08);
-                    } else {
-                        LauncherM.setPower(0);
-                        resume = false;
-                        EncoderClicks = EncoderClicks + 2510;
-                        Thread.sleep(500);
-                        shoot = false;
-                    }
-                }
-                idle();
             }
+            if(!shoot && !shoot1){
+                if(LauncherM.getCurrentPosition() > (EncoderClicks - 2510))
+                {
+
+                    LauncherM.setPower(-0.07);
+
+                }
+
+                if(LauncherM.getCurrentPosition() < (EncoderClicks - 2510))
+                {
+
+                    LauncherM.setPower(0.07);
+
+                }
+            }
+            idle();
         }
     }
     /*
