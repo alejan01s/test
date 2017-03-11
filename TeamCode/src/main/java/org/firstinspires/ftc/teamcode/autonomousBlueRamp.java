@@ -790,7 +790,7 @@ I2C GLOBAL VARIABLES
         }
         //set revs3
         if(step == 6){
-            while(RightDistanceTime > 1250 || RightDistanceTime == 0) {
+            while(RightDistanceTime > 1125 || RightDistanceTime == 0) {
                 CollectDistanceTime = true;
 
                 //Reading the Sonar Sensors
@@ -894,7 +894,7 @@ I2C GLOBAL VARIABLES
         //set possible rev3
         if(step == 7){
             NumberOfRevs4 = FL.getCurrentPosition() - 45;
-            NumberOfRevs3 = FL.getCurrentPosition() - 340;
+            NumberOfRevs3 = FL.getCurrentPosition() - 375;
             step=step+1;
         }
 
@@ -1190,7 +1190,7 @@ I2C GLOBAL VARIABLES
             step = step + .25;
         }
         if(step == 11.5){
-            while(RightDistanceTime > 1250 || RightDistanceTime == 0) {
+            while(RightDistanceTime > 1125 || RightDistanceTime == 0) {
                 CollectDistanceTime = true;
 
                 //Reading the Sonar Sensors

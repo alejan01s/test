@@ -791,7 +791,7 @@ public class autonomousBlueFull extends OpMode{
         }
         //set revs3
         if(step == 6){
-            while(RightDistanceTime > 1250 || RightDistanceTime == 0) {
+            while(RightDistanceTime > 1125 || RightDistanceTime == 0) {
                 CollectDistanceTime = true;
 
                 //Reading the Sonar Sensors
@@ -895,7 +895,7 @@ public class autonomousBlueFull extends OpMode{
         //set possible rev3
         if(step == 7){
             NumberOfRevs4 = FL.getCurrentPosition() - 45;
-            NumberOfRevs3 = FL.getCurrentPosition() - 340;
+            NumberOfRevs3 = FL.getCurrentPosition() - 375;
             step=step+1;
         }
 
@@ -1191,7 +1191,7 @@ public class autonomousBlueFull extends OpMode{
             step = step + .25;
         }
         if(step == 11.5){
-            while(RightDistanceTime > 1250 || RightDistanceTime == 0) {
+            while(RightDistanceTime > 1125 || RightDistanceTime == 0) {
                 CollectDistanceTime = true;
 
                 //Reading the Sonar Sensors

@@ -23,6 +23,8 @@ public class AutonomousV1 extends DefinerClass {
     public boolean pause = false;
     public boolean resume = false;
     public boolean seclaunch = false;
+    public boolean shoot1 = false;
+    public boolean fired = false;
 
     public DcMotor LauncherM;
     public Servo Reloader;
@@ -61,9 +63,10 @@ public class AutonomousV1 extends DefinerClass {
         int Angle2 = 90;
         int Angle3 = 180;
         int FinalAngle = 55;
-        int NumberOfRevs1 = -300;
+        int NumberOfRevs1 = -400;
         int NumberOfRevs2 = -320;
         int NumberOfRevsFinal = -3500;
+
         waitForStart();
         while(opModeIsActive()){
 
@@ -131,8 +134,12 @@ public class AutonomousV1 extends DefinerClass {
             //}
             //Launch second ball
             if(step == 1){
-                shoot = true;
-                step = step+1;
+                if(!fired) {
+                    shoot1 = true;
+                }
+                if(fired) {
+                    step = step + 1;
+                }
             }
             //if(step == 5){
                 //super.runOpMode(Angle3, false, false);
@@ -157,7 +164,7 @@ public class AutonomousV1 extends DefinerClass {
             }*/
 
             if(step == 2){
-                if(!shoot) {
+                if(!shoot1) {
                     shoot = true;
                     step = step + 1;
                 }
@@ -179,41 +186,86 @@ public class AutonomousV1 extends DefinerClass {
                     }
                 }
             }
+            if(shoot1){
+                if (LauncherM.getCurrentPosition() <= EncoderClicks) {
+                    LauncherM.setPower(0.85);
+                }
+                else{
+                    LauncherM.setPower(0);
+                    sleep(500);
+                    fired = true;
+                    shoot1 = false;
+                    EncoderClicks = EncoderClicks + 2520;
+                }
+            }
 
+//            if(shoot) {
+//
+//                if (LauncherM.getCurrentPosition() <= 1400 + (EncoderClicks - 2510)) {
+//
+//                    Reloader.setPosition(0.65);
+//                    LauncherM.setPower(0.75);
+//
+//                } else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2510)) {
+//
+//                    Reloader.setPosition(0.1);
+//                    LauncherM.setPower(1);
+//
+//                } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+//                    LauncherM.setPower(.1);
+//                } else {
+//                    LauncherM.setPower(0);
+//                    shoot = false;
+//                    EncoderClicks = EncoderClicks + 2510;
+//                }
+//            }
+//            if(!shoot){
+//                if(LauncherM.getCurrentPosition() > (EncoderClicks - 2510))
+//                {
+//
+//                    LauncherM.setPower(-0.07);
+//
+//                }
+//
+//                if(LauncherM.getCurrentPosition() < (EncoderClicks - 2510))
+//                {
+//
+//                    LauncherM.setPower(0.07);
+//
+//                }
             if(shoot) {
 
-                if (LauncherM.getCurrentPosition() <= 1400 + (EncoderClicks - 2510)) {
+                if(LauncherM.getCurrentPosition() <= 1000 + (EncoderClicks - 2520))
+                {
 
-                    Reloader.setPosition(0.65);
+                    Reloader.setPosition(0.7);
                     LauncherM.setPower(0.75);
 
-                } else if (LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2510)) {
+                }
+
+                else if(LauncherM.getCurrentPosition() <= 1200 + (EncoderClicks - 2520))
+                {
 
                     Reloader.setPosition(0.1);
-                    LauncherM.setPower(1);
 
-                } else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2510) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                }
+
+                else if(LauncherM.getCurrentPosition() <= 2520 + (EncoderClicks - 2520))
+                {
+
+                    Reloader.setPosition(0.1);
+                    LauncherM.setPower(0.85);
+
+                }
+
+                else if (LauncherM.getCurrentPosition() > 2520 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                     LauncherM.setPower(.1);
                 } else {
                     LauncherM.setPower(0);
                     shoot = false;
-                    EncoderClicks = EncoderClicks + 2510;
+                    EncoderClicks = EncoderClicks + 2520;
                 }
             }
-            if(!shoot){
-                if(LauncherM.getCurrentPosition() > (EncoderClicks - 2510))
-                {
-
-                    LauncherM.setPower(-0.07);
-
-                }
-
-                if(LauncherM.getCurrentPosition() < (EncoderClicks - 2510))
-                {
-
-                    LauncherM.setPower(0.07);
-
-                }
             //if(step == 5){
                 //super.runOpMode(0, false, false);
                 //TimeUnit.SECONDS.sleep(2);
@@ -237,7 +289,5 @@ public class AutonomousV1 extends DefinerClass {
             }*/
             idle();
         }
-    }
-
     }
 }

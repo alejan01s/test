@@ -1287,7 +1287,7 @@ public class autonomousFullRed extends OpMode {
 
         //set possible rev3
         if(step == 14){
-            NumberOfRevs3 = FL.getCurrentPosition() - 392;
+            NumberOfRevs3 = FL.getCurrentPosition() - 365;
             NumberOfRevs4 = FL.getCurrentPosition() - 55;
             step=step+1;
         }
@@ -1618,7 +1618,7 @@ public class autonomousFullRed extends OpMode {
         {
 
             Push2Complete = false;
-            PusherSleep = System.currentTimeMillis() + 2000;
+            PusherSleep = System.currentTimeMillis() + 2400;
             buttonPusher.setPosition(0.6);
             Push2Go = true;
             Push2 = false;
