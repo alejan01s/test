@@ -1073,7 +1073,7 @@ public class autonomousFullRed extends OpMode {
                 Push5 = true;
             }
 
-            if(FL.getCurrentPosition() > NumberOfRevs3 + 400) {
+            if(FL.getCurrentPosition() > NumberOfRevs3 + 600) {
                 BL.setPower(-1);
                 BR.setPower(-1);
                 FR.setPower(-1);
@@ -1747,7 +1747,7 @@ public class autonomousFullRed extends OpMode {
         {
 
             Push5Complete = false;
-            PusherSleep = System.currentTimeMillis() + 500;
+            PusherSleep = System.currentTimeMillis() + 350;
             buttonPusher.setPosition(0.4);
             Push5Go = true;
             Push5 = false;

@@ -18,11 +18,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 /**
- * Created by trevo on 03/09/2017.
+ * Created by aleja on 03/09/2017.
  */
 
-@Autonomous (name = "Primary Blue Center", group = "Sensor")
-public class autonomousBlueFull extends OpMode{
+@Autonomous (name = "Red Second-First Beacon", group = "Sensor")
+public class autonomousSecondBeaconFirst extends OpMode{
 
 
     /*
@@ -147,6 +147,7 @@ public class autonomousBlueFull extends OpMode{
     public double NumberOfRevs5 = 0;
     public double NumberOfRevs4;
     public double NumberOfRevs3;
+    public double NumberOfRevs6;
 
     public double colorCheckStep = 0;
 
@@ -320,7 +321,7 @@ public class autonomousBlueFull extends OpMode{
     double PusherSleep = 0;
 
     //REVOLUTION VARIABLES
-    int NumberOfRevs1 = -220;
+    int NumberOfRevs1 = 5000;
     int NumberOfRevs2 = -400;
 
     //ANGLE VARIABLES
@@ -508,11 +509,11 @@ public class autonomousBlueFull extends OpMode{
         if(step == 0){
 
             if(!firstCollect) {
-                if (FL.getCurrentPosition() > NumberOfRevs1) {
-                    BL.setPower(-.35);
-                    BR.setPower(-.35);
-                    FR.setPower(-.35);
-                    FL.setPower(-.35);
+                if (FL.getCurrentPosition() < NumberOfRevs1) {
+                    BL.setPower(1);
+                    BR.setPower(1);
+                    FR.setPower(1);
+                    FL.setPower(1);
                 } else {
                     BL.setPower(0);
                     BR.setPower(0);
@@ -531,45 +532,10 @@ public class autonomousBlueFull extends OpMode{
 
         }
 
-        //LAUNCH BALLS
-        if(step == 1){
-            if(!fired) {
-                shoot1 = true;
-            }
-            if(fired) {
-                step = step + 1;
-            }
-        }
-        if(step == 2){
-            if(!shoot) {
-                shoot = true;
-                step=step+1;
-            }
-        }
-
         //Move forward
-        if(step == 3){
-
+        if(step == 1){
             Push1Complete = false;
-
-            if(!shoot) {
-                if (FL.getCurrentPosition() > NumberOfRevs2) {
-                    BL.setPower(-.35);
-                    BR.setPower(-.35);
-                    FR.setPower(-.35);
-                    FL.setPower(-.35);
-                } else {
-                    BL.setPower(0);
-                    BR.setPower(0);
-                    FR.setPower(0);
-                    FL.setPower(0);
-
-                    NumberOfRevs5 = FL.getCurrentPosition() - 4900;
-                    NumberOfRevs4 = FL.getCurrentPosition() - 4200;
-                    NumberOfRevs3 = FL.getCurrentPosition() - 5450;
-                    step = step + 0.1;
-                }
-            }
+            step = step + 0.1;
         }
         if(shoot1){
             if (LauncherM.getCurrentPosition() <= EncoderClicks - 500) {
@@ -584,105 +550,26 @@ public class autonomousBlueFull extends OpMode{
         }
 
         //Strafe for time
-        if(step == 3.1){
+        if(step == 1.1){
 
             if(!Push1Complete) {
                 Push1 = true;
             }
-                /*if (bottomOD.getRawLightDetected() < .08) {
-                    FR.setPower(-1);
-                    BR.setPower(0);
-                    FL.setPower(0);
-                    BL.setPower(-1);
-                }
-                else {
-                    FR.setPower(0);
-                    BR.setPower(0);
-                    FL.setPower(0);
-                    BL.setPower(0);
-                    step = step + 1;
-                }*/
 
-            if(FL.getCurrentPosition() > NumberOfRevs4){
-                FL.setPower(-1);
-                BR.setPower(-1);
-            }
-            else if(FL.getCurrentPosition() > NumberOfRevs5)
-            {
+            step = step + .9;
 
-                FL.setPower(-0.65);
-                BR.setPower(-0.65);
-
-            }
-            else if(FL.getCurrentPosition() > NumberOfRevs3)
-            {
-
-                FL.setPower(-0.3);
-                BR.setPower(-0.3);
-
-            }
-            else {
-                //FR.setPower(0);
-                BR.setPower(0);
-                FL.setPower(0);
-                //BL.setPower(0);
-                step = step + 1.9;
-            }
         }
 
         //Strafe for time
-        if(step == 4){
-                /*if (bottomOD.getRawLightDetected() < .08) {
-                    FR.setPower(-1);
-                    BR.setPower(0);
-                    FL.setPower(0);
-                    BL.setPower(-1);
-                }
-                else {
-                    FR.setPower(0);
-                    BR.setPower(0);
-                    FL.setPower(0);
-                    BL.setPower(0);
-                    step = step + 1;
-                }*/
-
-            if(FR.getCurrentPosition() > NumberOfRevs3){
-                FR.setPower(-0.5);
-                BL.setPower(-0.5);
-            }
-            else{
-                FR.setPower(0);
-                BL.setPower(0);
-                step = step + 1;
-            }
+        if(step == 2){
+            step = step + 1;
         }
 
-        if(step == 5){
-//                if (x > .5 && x < 1.5) {
-//                    //has reached angle therefore end loop
-//                    FR.setPower(0);
-//                    FL.setPower(0);
-//                    BR.setPower(0);
-//                    BL.setPower(0);
-//                    turnCompleted = true;
-//                    step=step+.25;
-//                } else if (x < .5) {
-//                    //turn clockwise
-//                    FR.setPower(-.05);
-//                    FL.setPower(.05);
-//                    BR.setPower(-.05);
-//                    BL.setPower(.05);
-//                } else if (x > 1.5) {
-//                    //turn counter-clockwise
-//                    FR.setPower(0.05);
-//                    FL.setPower(-.05);
-//                    BR.setPower(0.05);
-//                    BL.setPower(-.05);
-//                }
-            while(yaw < 0 || yaw > 1.5){
+        if(step == 3){
+            while(yaw < -15 || yaw > -14.5){
                 angles = imu.getAngles();
                 yaw = angles[0];
-                if(yaw < 0){
+                if(yaw < -15){
 
                     //turn clockwise
                     FR.setPower(-.2);
@@ -691,7 +578,7 @@ public class autonomousBlueFull extends OpMode{
                     BL.setPower(.2);
 
                 }
-                else if(yaw > 1.5){
+                else if(yaw > -14.5){
 
                     //turn counter-clockwise
                     FR.setPower(0.2);
@@ -708,47 +595,11 @@ public class autonomousBlueFull extends OpMode{
             BR.setPower(0);
             BL.setPower(0);
             step=step+.5;
-//
-//                if (yaw > -3.5 && yaw < 0) {
-//                    //has reached angle therefore end loop
-//                    FR.setPower(0);
-//                    FL.setPower(0);
-//                    BR.setPower(0);
-//                    BL.setPower(0);
-//                    step=step+.5;
-//                } else if (yaw < -3.5) {
-//                    //turn clockwise
-//                    FR.setPower(-.1);
-//                    FL.setPower(.1);
-//                    BR.setPower(-.1);
-//                    BL.setPower(.1);
-//                } else if (yaw > 0) {
-//                    //turn counter-clockwise
-//                    FR.setPower(0.1);
-//                    FL.setPower(-.1);
-//                    BR.setPower(0.1);
-//                    BL.setPower(-.1);
-//                }
         }
 
 
         //move to line
-        if(step == 5.5){
-                /*
-                if(bottomOD.getRawLightDetected() < .08){
-                    FL.setPower(-.4);
-                    BL.setPower(-.4);
-                    FR.setPower(-.4);
-                    BR.setPower(-.4);
-                }
-                else{
-                    FL.setPower(0);
-                    BL.setPower(0);
-                    FR.setPower(0);
-                    BR.setPower(0);
-                    step=step+.5;
-                }
-                */
+        if(step == 3.5){
             while (bottomOD.getRawLightDetected() < .04) {
 
                 bottomOD.getLightDetected();
@@ -768,12 +619,12 @@ public class autonomousBlueFull extends OpMode{
         }
 
 
-        if(step == 5.75){
+        if(step == 3.75){
             turnCompleted = false;
             NumberOfRevs3 = FL.getCurrentPosition() + 60;
             step = step + .2;
         }
-        if(step == 5.95) {
+        if(step == 3.95) {
             if (FL.getCurrentPosition() < NumberOfRevs3) {
                 BL.setPower(.1);
                 BR.setPower(.1);
@@ -790,7 +641,7 @@ public class autonomousBlueFull extends OpMode{
             }
         }
         //set revs3
-        if(step == 6){
+        if(step == 4){
             while(RightDistanceTime > 1125 || RightDistanceTime == 0) {
                 CollectDistanceTime = true;
 
@@ -865,14 +716,14 @@ public class autonomousBlueFull extends OpMode{
 
 
         }
-        if(step == 6.5){
+        if(step == 4.5){
             NumberOfRevs3 = FL.getCurrentPosition() - 30;
             launcherCorrect = true;
             CollectDistanceTime = false;
             step=step+.25;
         }
         //Position
-        if(step == 6.75){
+        if(step == 4.75){
             if(FL.getCurrentPosition() > NumberOfRevs3) {
                 BL.setPower(-.15);
                 BR.setPower(-.15);
@@ -893,10 +744,10 @@ public class autonomousBlueFull extends OpMode{
         }
 
         //set possible rev3
-        if(step == 7){
+        if(step == 5){
             NumberOfRevs4 = FL.getCurrentPosition() - 45;
             NumberOfRevs3 = FL.getCurrentPosition() - 375;
-            step=step+1;
+            step=step+3;
         }
 
         //Detect color
@@ -930,31 +781,6 @@ public class autonomousBlueFull extends OpMode{
                     FR.setPower(0);
                     FL.setPower(0);
 
-//                        sleepOn = true;
-//                        timeToSleep = 5;
-//
-//                        if (sleepOn) {
-//
-//                            timeToWake = System.currentTimeMillis() + timeToSleep;
-//
-//                            while (System.currentTimeMillis() < timeToWake) {
-//
-//                            }
-//
-//                            timeToSleep = 0;
-//
-//                            sleepOn = false;
-//
-//                        }
-//
-//                        if (!pushed) {
-//                            push = true;
-//                        } else {
-//                            step = step + 1;
-//
-//
-//                        }
-
                     if(!Push3Complete)
                     {
 
@@ -982,56 +808,6 @@ public class autonomousBlueFull extends OpMode{
                     BR.setPower(0);
                     FR.setPower(0);
                     FL.setPower(0);
-//                        sleepOn = true;
-//                        timeToSleep = 5;
-//
-//                        if (sleepOn) {
-//
-//                            timeToWake = System.currentTimeMillis() + timeToSleep;
-//
-//                            while (System.currentTimeMillis() < timeToWake) {
-//
-//                            }
-//
-//                            timeToSleep = 0;
-//
-//                            sleepOn = false;
-//
-//                        }
-//                        if (!pushed) {
-//                            push = true;
-//                        }
-//                        if (pushed) {
-//                            step = step + 1;
-//                        }
-                        /*if(isBlue) {
-                            if (!pushed) {
-                                push = true;
-                            }
-                            if (pushed) {
-                                step = step + 1;
-                            }
-                        }
-                        else{
-                            if(FL.getCurrentPosition() < NumberOfRevs3) {
-                                BL.setPower(.1);
-                                BR.setPower(.1);
-                                FR.setPower(.1);
-                                FL.setPower(.1);
-                            }
-                            else {
-                                BL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                FL.setPower(0);
-                                if (!pushed) {
-                                    push = true;
-                                }
-                                if (pushed) {
-                                    step = step + 1;
-                                }
-                            }
-                        }*/
 
                     if(!Push3Complete)
                     {
@@ -1073,7 +849,7 @@ public class autonomousBlueFull extends OpMode{
                 Push5 = true;
             }
 
-            if(FL.getCurrentPosition() > NumberOfRevs3 + 600) {
+            if(FL.getCurrentPosition() > NumberOfRevs3 + 400) {
                 BL.setPower(-1);
                 BR.setPower(-1);
                 FR.setPower(-1);
@@ -1132,10 +908,10 @@ public class autonomousBlueFull extends OpMode{
         }
         if(step == 11.25){
 
-            while(yaw < 0 || yaw > 1.5){
+            while(yaw < -15 || yaw > -14.5){
                 angles = imu.getAngles();
                 yaw = angles[0];
-                if(yaw < 0){
+                if(yaw < -15){
 
                     //turn clockwise
                     FR.setPower(-.2);
@@ -1144,7 +920,7 @@ public class autonomousBlueFull extends OpMode{
                     BL.setPower(.2);
 
                 }
-                else if(yaw > 1.5){
+                else if(yaw > -14.5){
 
                     //turn counter-clockwise
                     FR.setPower(0.2);
@@ -1160,32 +936,6 @@ public class autonomousBlueFull extends OpMode{
             FL.setPower(0);
             BR.setPower(0);
             BL.setPower(0);
-            //step=step+.25;
-
-
-
-//                if (yaw > -3.5 && yaw < 0) {
-//                    //has reached angle therefore end loop
-//                    FR.setPower(0);
-//                    FL.setPower(0);
-//                    BR.setPower(0);
-//                    BL.setPower(0);
-//                    step=step+.25;
-//                } else if (yaw < -3.5) {
-//                    //turn clockwise
-//                    FR.setPower(-.1);
-//                    FL.setPower(.1);
-//                    BR.setPower(-.1);
-//                    BL.setPower(.1);
-//                } else if (yaw > 0) {
-//                    //turn counter-clockwise
-//                    FR.setPower(0.1);
-//                    FL.setPower(-.1);
-//                    BR.setPower(0.1);
-//                    BL.setPower(-.1);
-//                }
-
-
             turnCompleted = false;
             RightDistanceTime = 10000;
             step = step + .25;
@@ -1288,7 +1038,7 @@ public class autonomousBlueFull extends OpMode{
         //set possible rev3
         if(step == 14){
             NumberOfRevs3 = FL.getCurrentPosition() - 392;
-            NumberOfRevs4 = FL.getCurrentPosition() - 35;
+            NumberOfRevs4 = FL.getCurrentPosition() - 55;
             step=step+1;
         }
 
@@ -1319,14 +1069,6 @@ public class autonomousBlueFull extends OpMode{
                     BR.setPower(0);
                     FR.setPower(0);
                     FL.setPower(0);
-
-
-//                        if(!pushed) {
-//                            push = true;
-//                        }
-//                        else {
-//                            step = step + .5;
-//                        }
 
                     if(!Push4Complete)
                     {
@@ -1360,56 +1102,6 @@ public class autonomousBlueFull extends OpMode{
                     BR.setPower(0);
                     FR.setPower(0);
                     FL.setPower(0);
-//                        sleepOn = true;
-//                        timeToSleep = 5;
-//
-//                        if (sleepOn) {
-//
-//                            timeToWake = System.currentTimeMillis() + timeToSleep;
-//
-//                            while (System.currentTimeMillis() < timeToWake) {
-//
-//                            }
-//
-//                            timeToSleep = 0;
-//
-//                            sleepOn = false;
-//
-//                        }
-/*                        if (!pushed) {
-                            push = true;
-                        }
-                        if (pushed) {
-                            step = step + .5;
-                        }*/
-                        /*if(isBlue) {
-                            if (!pushed) {
-                                push = true;
-                            }
-                            if (pushed) {
-                                step = step + 1;
-                            }
-                        }
-                        else{
-                            if(FL.getCurrentPosition() < NumberOfRevs3) {
-                                BL.setPower(.1);
-                                BR.setPower(.1);
-                                FR.setPower(.1);
-                                FL.setPower(.1);
-                            }
-                            else {
-                                BL.setPower(0);
-                                BR.setPower(0);
-                                FR.setPower(0);
-                                FL.setPower(0);
-                                if (!pushed) {
-                                    push = true;
-                                }
-                                if (pushed) {
-                                    step = step + 1;
-                                }
-                            }
-                        }*/
 
                     if(!Push4Complete)
                     {
@@ -1427,9 +1119,6 @@ public class autonomousBlueFull extends OpMode{
             }
         }
         if(step == 15.5){
-
-//                Ignore = true;
-//
 
             buttonPusher2.setPosition(0.6);
 
@@ -1469,7 +1158,45 @@ public class autonomousBlueFull extends OpMode{
         //TURN
         if(step == 16){
 
-            while(yaw > -35){
+            while(yaw < 50){
+                angles = imu.getAngles();
+                yaw = angles[0];
+
+                FR.setPower(-.3);
+                FL.setPower(.3);
+                BR.setPower(-.3);
+                BL.setPower(.3);
+
+            }
+
+            FR.setPower(0);
+            FL.setPower(0);
+            BR.setPower(0);
+            BL.setPower(0);
+
+            step = step + 1;
+
+        }
+
+        if(step == 17){
+            if(!fired) {
+                shoot1 = true;
+            }
+            if(fired) {
+                step = step + 1;
+            }
+        }
+
+        if(step == 18){
+            if(!shoot) {
+                shoot = true;
+                step=step+1;
+            }
+        }
+
+        if(step == 19){
+
+            while(yaw > 0){
                 angles = imu.getAngles();
                 yaw = angles[0];
 
@@ -1485,97 +1212,31 @@ public class autonomousBlueFull extends OpMode{
             BR.setPower(0);
             BL.setPower(0);
 
+            NumberOfRevs6 = FL.getCurrentPosition() - 500;
             step = step + 1;
 
-
-
-                /*
-/*
-                pushed = false;
-                nearPush = false;
-                OppPushSequence = false;
-                if (x > 129 && x < 131) {
-                    //has reached angle therefore end loop
-                    FR.setPower(0);
-                    FL.setPower(0);
-                    BR.setPower(0);
-                    BL.setPower(0);
-                    turnCompleted = true;
-                    step=step+1;
-                } else if (x < 129) {
-                    //turn clockwise
-                    FR.setPower(-.5);
-                    FL.setPower(.5);
-                    BR.setPower(-.5);
-                    BL.setPower(.5);
-                } else if (x > 131) {
-                    //turn counter-clockwise
-                    FR.setPower(0.5);
-                    FL.setPower(-.5);
-                    BR.setPower(0.5);
-                    BL.setPower(-.5);
-                }*/
-//
-//                if (FL.getCurrentPosition() < NumberOfRevs3) {
-//                    BL.setPower(.5);
-//                    BR.setPower(-.5);
-//                    FR.setPower(-.5);
-//                    FL.setPower(.5);
-//                } else {
-//                    BL.setPower(0);
-//                    BR.setPower(0);
-//                    FR.setPower(0);
-//                    FL.setPower(0);
-//                    step = step + 1;
-//                }
         }
 
-        //set rev3
-        if(step == 17){
-            turnCompleted = false;
-            NumberOfRevs3 = FL.getCurrentPosition() + 2900;
-            if(OppPushSequence)
-            {
-
-                NumberOfRevs3 = FL.getCurrentPosition() + 3350;
-
+        if(step == 20){
+            if(FL.getCurrentPosition() > NumberOfRevs6) {
+                BL.setPower(-.5);
+                BR.setPower(-.5);
+                FR.setPower(-.5);
+                FL.setPower(-.5);
             }
-            step=step+1;
-        }
-
-        //move forward
-        if(step == 18){
-
-            //Push6 = true;
-
-            if(FL.getCurrentPosition() < NumberOfRevs3) {
-                BL.setPower(1);
-                BR.setPower(1);
-                FR.setPower(1);
-                FL.setPower(1);
-            }
-            else{
+            else {
                 BL.setPower(0);
                 BR.setPower(0);
                 FR.setPower(0);
                 FL.setPower(0);
-                step=step+1;
             }
         }
 
-//            if(step == 19)
-//            {
-//
-//                Push6 = true;
-//                step = step+1;
-//
-//            }
+        /*
 
-            /*
+        Button Pusher
 
-            Button Pusher
-
-             */
+        */
 
         if(Push1 && Ignore == false)
         {
@@ -1733,16 +1394,6 @@ public class autonomousBlueFull extends OpMode{
 
         }
 
-//            if(Push4Complete)
-//            {
-//
-//                Push5 = true;
-//                Push4Complete = false;
-//
-//            }
-
-
-
         if(Push5 && Ignore == false)
         {
 
@@ -1815,112 +1466,6 @@ public class autonomousBlueFull extends OpMode{
 
         }
 
-
-
-
-
-
-
-//            if(!buttonInit){
-//                buttonPusher.setPosition(.5);
-//                if(push){
-//                    buttonInit = true;
-//                    StartPush = true;
-//                }
-//            }
-//            else{
-//
-//                if(StartPush == true) {
-//                    buttonPusher.setPosition(.6);
-//                    ButtonPusherExtensionStep = 0;
-//                    ButtonPusherRetractionStep = -1;
-//                    PusherExtend = true;
-//                    PusherRetract = false;
-//                    EndPush = false;
-//                    StartPush = false;
-//                }
-//
-//                if(PusherExtend == true) {
-//                    if ((ButtonPusherExtensionStep < 5) && (ButtonPusherExtensionStep > -1) && (ButtonPusherRetractionStep == -1)) {
-//
-//                        ButtonPusherRetractionStep = -1;
-//
-//                        for (int i = 0; i < 5; i++) {
-//                            sleepOn = true;
-//                            timeToSleep = 92;
-//
-//                            if (sleepOn) {
-//
-//                                timeToWake = System.currentTimeMillis() + timeToSleep;
-//
-//                                while (System.currentTimeMillis() < timeToWake) {
-//
-//                                }
-//
-//                                timeToSleep = 0;
-//
-//                                sleepOn = false;
-//
-//                            }
-//
-//                        }
-//
-//                        ButtonPusherExtensionStep = ButtonPusherExtensionStep + 1;
-//                    }
-//                }
-//
-//                if((PusherExtend == true) && (ButtonPusherExtensionStep >= 5)) {
-//                    buttonPusher.setPosition(.4);
-//                    ButtonPusherExtensionStep = -1;
-//                    ButtonPusherRetractionStep = 0;
-//                    PusherRetract = true;
-//                    StartPush = false;
-//                    EndPush = false;
-//                    PusherExtend = false;
-//                }
-//
-//                if(PusherRetract == true) {
-//                    if ((ButtonPusherRetractionStep < 5) && (ButtonPusherRetractionStep > -1) && (ButtonPusherExtensionStep == -1)) {
-//
-//                        ButtonPusherExtensionStep = -1;
-//
-//                        for (int i = 0; i < 5; i++) {
-//                            sleepOn = true;
-//                            timeToSleep = 92;
-//
-//                            if (sleepOn) {
-//
-//                                timeToWake = System.currentTimeMillis() + timeToSleep;
-//
-//                                while (System.currentTimeMillis() < timeToWake) {
-//
-//                                }
-//
-//                                timeToSleep = 0;
-//
-//                                sleepOn = false;
-//
-//                            }
-//                        }
-//
-//                        ButtonPusherRetractionStep = ButtonPusherRetractionStep + 1;
-//
-//                    }
-//                }
-//
-//                if((PusherRetract == true) && (ButtonPusherRetractionStep >= 5)) {
-//                    buttonInit = false;
-//                    push = false;
-//                    pushed = true;
-//                    ButtonPusherExtensionStep = -1;
-//                    ButtonPusherRetractionStep = -1;
-//                    StartPush = false;
-//                    PusherExtend = false;
-//                    PusherRetract = false;
-//                    EndPush = true;
-//                }
-//            }
-
             /*
 
             SHOOTING SYSTEM
@@ -1960,49 +1505,6 @@ public class autonomousBlueFull extends OpMode{
                 EncoderClicks = EncoderClicks + 2520;
             }
         }
-//
-//                if(launcherCorrect) {
-//
-////                    if(LauncherM.getCurrentPosition() > (EncoderClicks - 2400))
-////                    {
-////
-////                        LauncherM.setPower(-0.3);
-////
-////                    }
-//
-//                     if (LauncherM.getCurrentPosition() > (EncoderClicks - 2500)) {
-//
-//                        LauncherM.setPower(-0.03);
-//
-//                    }
-//
-//                    else if (LauncherM.getCurrentPosition() < (EncoderClicks - 2540)) {
-//
-//                        LauncherM.setPower(0.03);
-//
-//                    }
-//
-//                    else if ((LauncherM.getCurrentPosition() < (EncoderClicks - 2500)) && (LauncherM.getCurrentPosition() > (EncoderClicks - 2540)))
-//                    {
-//
-//                        LauncherM.setPower(0);
-//
-//                    }
-//                }
-//
-//
-//                if((!launcherCorrect) && (step > 3))
-//                {
-//
-//                    LauncherM.setPower(0);
-//
-//                }
-
-//            else if(step > 11){
-//
-//                LauncherM.setPower(0);
-//
-//            }
     }
 
     @Override

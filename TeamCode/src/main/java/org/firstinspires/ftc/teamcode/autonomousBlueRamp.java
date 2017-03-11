@@ -319,7 +319,7 @@ I2C GLOBAL VARIABLES
     double PusherSleep = 0;
 
     //REVOLUTION VARIABLES
-    int NumberOfRevs1 = -170;
+    int NumberOfRevs1 = -220;
     int NumberOfRevs2 = -400;
 
     //ANGLE VARIABLES
@@ -563,9 +563,9 @@ I2C GLOBAL VARIABLES
                     FR.setPower(0);
                     FL.setPower(0);
 
-                    NumberOfRevs5 = FL.getCurrentPosition() - 4650;
-                    NumberOfRevs4 = FL.getCurrentPosition() - 4000;
-                    NumberOfRevs3 = FL.getCurrentPosition() - 5400;
+                    NumberOfRevs5 = FL.getCurrentPosition() - 4900;
+                    NumberOfRevs4 = FL.getCurrentPosition() - 4200;
+                    NumberOfRevs3 = FL.getCurrentPosition() - 5450;
                     step = step + 0.1;
                 }
             }
@@ -1072,7 +1072,7 @@ I2C GLOBAL VARIABLES
                 Push5 = true;
             }
 
-            if(FL.getCurrentPosition() > NumberOfRevs3 + 400) {
+            if(FL.getCurrentPosition() > NumberOfRevs3 + 600) {
                 BL.setPower(-1);
                 BR.setPower(-1);
                 FR.setPower(-1);
@@ -1287,7 +1287,7 @@ I2C GLOBAL VARIABLES
         //set possible rev3
         if(step == 14){
             NumberOfRevs3 = FL.getCurrentPosition() - 392;
-            NumberOfRevs4 = FL.getCurrentPosition() - 55;
+            NumberOfRevs4 = FL.getCurrentPosition() - 35;
             step=step+1;
         }
 
