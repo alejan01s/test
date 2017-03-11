@@ -321,7 +321,7 @@ public class autonomousBlueFull extends OpMode{
 
     //REVOLUTION VARIABLES
     int NumberOfRevs1 = -220;
-    int NumberOfRevs2 = -400;
+    int NumberOfRevs2 = -120;
 
     //ANGLE VARIABLES
     double Angle1 = 190;
@@ -525,7 +525,7 @@ public class autonomousBlueFull extends OpMode{
 
         if(step == 0.5)
         {
-
+            NumberOfRevs3 = FL.getCurrentPosition() + 100;
             Push1 = true;
             step = step + 0.5;
 
@@ -543,7 +543,23 @@ public class autonomousBlueFull extends OpMode{
         if(step == 2){
             if(!shoot) {
                 shoot = true;
-                step=step+1;
+                step=step+.5;
+            }
+        }
+        if(step == 2.5){
+            if(!shoot) {
+                if (FL.getCurrentPosition() < NumberOfRevs3) {
+                    BL.setPower(.35);
+                    BR.setPower(.35);
+                    FR.setPower(.35);
+                    FL.setPower(.35);
+                } else {
+                    BL.setPower(0);
+                    BR.setPower(0);
+                    FR.setPower(0);
+                    FL.setPower(0);
+                    step = step + 0.5;
+                }
             }
         }
 
@@ -1080,7 +1096,7 @@ public class autonomousBlueFull extends OpMode{
                 FL.setPower(-1);
             }
 
-            else if(FL.getCurrentPosition() > NumberOfRevs3 + 200)
+            else if(FL.getCurrentPosition() > NumberOfRevs3 + 400)
             {
 
                 BL.setPower(-.65);
