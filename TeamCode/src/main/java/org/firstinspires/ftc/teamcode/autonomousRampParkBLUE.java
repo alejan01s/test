@@ -1107,6 +1107,7 @@ import android.graphics.Color;
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -1131,7 +1132,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
-
+    @Disabled
 @Autonomous (name = "autonomousRampParkBLUE", group = "Sensor")
 public class autonomousRampParkBLUE extends LinearOpMode {
 

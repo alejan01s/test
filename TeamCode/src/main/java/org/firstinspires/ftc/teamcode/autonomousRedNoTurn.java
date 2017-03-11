@@ -1114,6 +1114,7 @@ import java.util.concurrent.TimeUnit;
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
 
+    @Disabled
 @Autonomous (name = "primaryAutonomousRED", group = "Sensor")
 public class autonomousRedNoTurn extends LinearOpMode {
 

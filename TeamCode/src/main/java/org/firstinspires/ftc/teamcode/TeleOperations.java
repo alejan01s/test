@@ -81,6 +81,8 @@ public class TeleOperations extends LinearOpMode {
     public boolean runReload;
     public boolean runReloaderDown;
 
+    public boolean setEncoder = true;
+
     public void initializeRobot() throws InterruptedException {
 
         //CONFIGURATION
@@ -168,7 +170,22 @@ public class TeleOperations extends LinearOpMode {
         boolean rRanDown = false;
         tensionLift = false;
 
-        EncoderClicks = LauncherM.getCurrentPosition() + 2520;
+        while(setEncoder == true) {
+            if (LauncherM.getCurrentPosition() < 3000) {
+
+                EncoderClicks = LauncherM.getCurrentPosition() + 2520;
+
+                setEncoder = false;
+
+            } else {
+
+                EncoderClicks = 7560;
+
+                setEncoder = false;
+
+            }
+
+        }
 
         waitForStart();
         while(opModeIsActive()){
@@ -258,23 +275,30 @@ public class TeleOperations extends LinearOpMode {
 
             if(shoot) {
 
-                if(LauncherM.getCurrentPosition() <= 1400 + (EncoderClicks - 2520))
+                if(LauncherM.getCurrentPosition() <= 1000 + (EncoderClicks - 2520))
                 {
 
-                    Reloader.setPosition(0.65);
-                    LauncherM.setPower(0.75);
+                    Reloader.setPosition(0.7);
+                    LauncherM.setPower(0.45);
 
                 }
 
-                else if(LauncherM.getCurrentPosition() <= 2250 + (EncoderClicks - 2520))
+                else if(LauncherM.getCurrentPosition() <= 1200 + (EncoderClicks - 2520))
                 {
 
                     Reloader.setPosition(0.1);
-                    LauncherM.setPower(1);
 
                 }
 
-                else if (LauncherM.getCurrentPosition() > 2250 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
+                else if(LauncherM.getCurrentPosition() <= 2520 + (EncoderClicks - 2520))
+                {
+
+                    Reloader.setPosition(0.1);
+                    LauncherM.setPower(0.85);
+
+                }
+
+                else if (LauncherM.getCurrentPosition() > 2520 + (EncoderClicks - 2520) && LauncherM.getCurrentPosition() <= EncoderClicks) {
                     LauncherM.setPower(.1);
                 } else {
                     LauncherM.setPower(0);

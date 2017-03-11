@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 //Plan: Launch ball into goal, reload, launch second, then hit beacons and then knock the ball
-
+    @Disabled
 @Autonomous (name = "newAutonomous", group = "Sensor")
 public class autonomousV3FullRED extends OpMode {
 
